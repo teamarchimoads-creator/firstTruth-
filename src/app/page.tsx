@@ -1,26 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useModal } from "@/context/ModalContext";
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    serviceType: "Investment Planning",
-    notes: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+  const { openModal } = useModal();
 
+  // 3D Parallax Mascot state
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+
+  // Quick Loan EMI Calculator preview state
+  const [calcAmount, setCalcAmount] = useState(2500000);
+  const [calcRate, setCalcRate] = useState(8.5);
+  const [calcTenure, setCalcTenure] = useState(15);
+
+  const calculateEMI = () => {
+    const principal = calcAmount;
+    const monthlyRate = calcRate / (12 * 100);
+    const months = calcTenure * 12;
+    if (monthlyRate === 0) return Math.round(principal / months);
+    const emi =
+      (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+      (Math.pow(1 + monthlyRate, months) - 1);
+    return Math.round(emi);
+  };
+
+  const monthlyEmi = calculateEMI();
+  const totalPayment = monthlyEmi * (calcTenure * 12);
+  const totalInterest = Math.max(0, totalPayment - calcAmount);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -29,513 +39,470 @@ export default function Home() {
     setMousePos({ x, y });
   };
 
-  const openServiceModal = (serviceName: string) => {
-    setFormData((prev) => ({ ...prev, serviceType: serviceName }));
-    setIsModalOpen(true);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setSubmitStatus(null);
-
-    try {
-      const res = await fetch("/api/consultations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to submit inquiry");
-      }
-      setSubmitStatus({
-        type: "success",
-        message: data.message || "Consultation booked successfully!",
-      });
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        serviceType: "Investment Planning",
-        notes: "",
-      });
-      setTimeout(() => {
-        setIsModalOpen(false);
-        setSubmitStatus(null);
-      }, 2500);
-    } catch (err: unknown) {
-      setSubmitStatus({
-        type: "error",
-        message: err instanceof Error ? err.message : "Submission failed",
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const services = [
+  const featuredServices = [
     {
-      title: "Investment Planning",
+      title: "Home Loan Consultation",
+      href: "/services/home-loan",
+      tagline: "For Purchasing Residential Property",
       description:
-        "Build wealth with smart, goal-based investment strategies tailored to your risk profile.",
+        "Help prospective homebuyers explore financing options, eligibility criteria, lender comparisons, and EMI estimates.",
+      badge: "Residential Financing",
       icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
       ),
     },
     {
-      title: "Insurance & Risk Management",
+      title: "Business Loan Consultation",
+      href: "/services/business-loan",
+      tagline: "Working Capital, Equipment & Expansion",
       description:
-        "Protect what matters with the right insurance and risk solutions for you and your family.",
+        "Understand financing routes, vintage requirements, turnover assessments, and documentation commonly reviewed by lenders.",
+      badge: "Commercial Growth",
       icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
       ),
     },
     {
-      title: "Loans & Credit Solutions",
+      title: "Loan Against Property (LAP)",
+      href: "/services/loan-against-property",
+      tagline: "Unlock Capital with Existing Real Estate",
       description:
-        "Get the right loan for your needs with competitive options and hassle-free process.",
+        "Leverage property value for business or major personal financing needs with clear collateral evaluation and lender policy review.",
+      badge: "Property Collateral",
       icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+        <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
         </svg>
       ),
     },
     {
-      title: "Wealth & Retirement Planning",
+      title: "Vehicle Loan Consultation",
+      href: "/services/vehicle-loan",
+      tagline: "Private & Commercial Vehicles",
       description:
-        "Plan today for a comfortable and secure tomorrow with long-term wealth strategies.",
+        "Financing guidance for commercial fleet and private automobiles, covering down payments and repayment periods.",
+      badge: "Auto & Commercial",
       icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
         </svg>
       ),
     },
     {
-      title: "Tax Planning",
+      title: "Personal Loan Consultation",
+      href: "/services/personal-loan",
+      tagline: "Unsecured Financing for Eligible Needs",
       description:
-        "Optimize your taxes and keep more of what you earn with compliant strategies.",
+        "Understand factors influencing personal loan offers including income, credit history, existing liabilities, and repayment capacity.",
+      badge: "Flexible Needs",
       icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      ),
-    },
-  ];
-
-  const whyChooseUs = [
-    {
-      title: "Personalized Guidance",
-      description: "Solutions tailored to your unique needs and goals.",
-      icon: (
-        <svg className="w-5 h-5 text-[#0B1B3D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+        <svg className="w-6 h-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       ),
     },
-    {
-      title: "Transparent Advice",
-      description: "Honest, clear and easy-to-understand recommendations.",
-      icon: (
-        <svg className="w-5 h-5 text-[#0B1B3D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      ),
-    },
-    {
-      title: "Goal-Based Planning",
-      description: "Focused strategies for short, medium and long-term goals.",
-      icon: (
-        <svg className="w-5 h-5 text-[#0B1B3D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="9" />
-          <circle cx="12" cy="12" r="5" />
-          <circle cx="12" cy="12" r="1" fill="currentColor" />
-        </svg>
-      ),
-    },
-    {
-      title: "Long-Term Partnership",
-      description: "Your success is our success — we grow together.",
-      icon: (
-        <svg className="w-5 h-5 text-[#0B1B3D]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-        </svg>
-      ),
-    },
+  ];
+
+  const processSteps = [
+    { step: "01", title: "Understand Requirement", desc: "Discuss loan type, intended use, and approximate funding need." },
+    { step: "02", title: "Review Profile", desc: "Consider income, business details, obligations, and credit history." },
+    { step: "03", title: "Explore Options", desc: "Review relevant lenders and products matching your profile." },
+    { step: "04", title: "Prepare Documentation", desc: "Understand documents needed and organize for application." },
+    { step: "05", title: "Follow-Up & Clarity", desc: "Follow the application process and address lender queries." },
   ];
 
   return (
-    <div className="min-h-screen bg-white text-[#0B1B3D] antialiased flex flex-col font-sans selection:bg-orange-500 selection:text-white">
-      {/* Subtle background ambient gradients */}
+    <div className="relative w-full overflow-hidden">
+      {/* Ambient background blur circles */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-orange-100/40 rounded-full blur-3xl" />
-        <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-sky-50/60 rounded-full blur-3xl" />
-        <div className="absolute top-[40%] right-[10%] w-[400px] h-[400px] bg-orange-50/50 rounded-full blur-3xl" />
-        <div className="absolute top-[75%] left-[5%] w-[500px] h-[500px] bg-sky-50/50 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -left-32 w-[550px] h-[550px] bg-orange-100/40 rounded-full blur-3xl" />
+        <div className="absolute top-24 right-0 w-[600px] h-[600px] bg-sky-50/70 rounded-full blur-3xl" />
+        <div className="absolute top-[45%] left-[5%] w-[450px] h-[450px] bg-amber-50/50 rounded-full blur-3xl" />
+        <div className="absolute top-[75%] right-[5%] w-[500px] h-[500px] bg-sky-50/60 rounded-full blur-3xl" />
       </div>
 
-      {/* Navigation Header */}
-      <header className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-3">
-        <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <a href="#" className="flex items-center gap-2.5 group">
-              <div className="relative h-12 w-auto flex items-center">
-                <Image
-                  src="/logo.png"
-                  alt="FIRST TRUTH FINANCE CONSULTATIONS"
-                  width={220}
-                  height={60}
-                  priority
-                  className="h-11 sm:h-13 w-auto object-contain"
-                  style={{ width: "auto" }}
-                />
-              </div>
-            </a>
-          </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-8 xl:gap-10">
-            <a
-              href="#home"
-              className="relative text-[#0B1B3D] font-bold text-sm tracking-wide transition-colors py-1 group"
-            >
-              Home
-              <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
-            </a>
-            <a
-              href="#about"
-              className="text-[#475569] hover:text-[#0B1B3D] font-medium text-sm tracking-wide transition-colors py-1"
-            >
-              About Us
-            </a>
-            <a
-              href="#services"
-              className="text-[#475569] hover:text-[#0B1B3D] font-medium text-sm tracking-wide transition-colors py-1"
-            >
-              Services
-            </a>
-            <a
-              href="#resources"
-              className="text-[#475569] hover:text-[#0B1B3D] font-medium text-sm tracking-wide transition-colors py-1"
-            >
-              Resources
-            </a>
-            <a
-              href="#why-us"
-              className="text-[#475569] hover:text-[#0B1B3D] font-medium text-sm tracking-wide transition-colors py-1"
-            >
-              Why First Truth
-            </a>
-            <a
-              href="#contact"
-              className="text-[#475569] hover:text-[#0B1B3D] font-medium text-sm tracking-wide transition-colors py-1"
-            >
-              Contact Us
-            </a>
-          </nav>
-
-          {/* Right Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3.5">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="px-6 py-2 rounded-full border border-slate-300 text-xs sm:text-sm font-semibold text-[#0B1B3D] hover:bg-slate-50 hover:border-slate-400 transition-all cursor-pointer"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="px-5 sm:px-6 py-2.5 rounded-full bg-gradient-to-r from-[#F97316] to-[#FB923C] hover:from-[#EA580C] hover:to-[#F97316] text-white text-xs sm:text-sm font-semibold shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 transition-all flex items-center gap-1.5 cursor-pointer group"
-            >
-              <span>Get Consultation</span>
-              <svg
-                className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.5"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
-            </button>
-          </div>
-
-          {/* Mobile menu toggle button */}
-          <div className="flex sm:hidden items-center gap-2">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="px-3.5 py-1.5 rounded-full bg-[#F97316] text-white text-xs font-semibold"
-            >
-              Consultation
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-700 hover:bg-slate-100"
-              aria-label="Toggle menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden mt-2 p-4 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-xl flex flex-col gap-3">
-            <a href="#home" className="text-orange-600 font-semibold py-1">Home</a>
-            <a href="#about" className="text-slate-700 font-medium py-1">About Us</a>
-            <a href="#services" className="text-slate-700 font-medium py-1">Services</a>
-            <a href="#resources" className="text-slate-700 font-medium py-1">Resources</a>
-            <a href="#why-us" className="text-slate-700 font-medium py-1">Why First Truth</a>
-            <a href="#contact" className="text-slate-700 font-medium py-1">Contact Us</a>
-            <div className="pt-2 border-t border-slate-100 flex gap-2">
-              <button
-                onClick={() => { setIsModalOpen(true); setMobileMenuOpen(false); }}
-                className="flex-1 py-2 rounded-full border border-slate-300 text-xs font-semibold text-slate-800"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => { setIsModalOpen(true); setMobileMenuOpen(false); }}
-                className="flex-1 py-2 rounded-full bg-[#F97316] text-white text-xs font-semibold"
-              >
-                Get Consultation
-              </button>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* Main Content Area */}
-      <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
-        
         {/* ========================================================= */}
         {/* HERO SECTION */}
         {/* ========================================================= */}
-        <section id="home" className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-2 sm:pt-6">
-          
-          {/* Left Column: Headlines & Content */}
-          <div className="lg:col-span-7 flex flex-col items-start">
-            {/* Top Tagline */}
-            <div className="inline-flex items-center gap-2 mb-4 sm:mb-5">
-              <span className="w-5 sm:w-6 h-[2.5px] bg-[#F97316] rounded-full" />
-              <span className="text-[11px] sm:text-xs font-bold tracking-widest text-[#0B1B3D] uppercase">
-                YOUR TRUSTED FINANCIAL PARTNER
+        <section className="pt-2 sm:pt-6 w-full">
+          {/* ========================================================= */}
+
+          {/* ========================================================= */}
+          <div className="lg:hidden w-full">
+            {/* Brand Pill */}
+            <div className="inline-flex items-center gap-2 mb-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-200/80">
+              <span className="w-2 h-2 rounded-full bg-[#F97316] animate-pulse" />
+              <span className="text-[10px] font-bold tracking-wider text-[#0B1B3D] uppercase">
+                FIRST TRUTH FINANCE CONSULTATIONS • ROHTAK, HARYANA
               </span>
             </div>
 
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[54px] xl:text-[60px] font-extrabold text-[#0B1B3D] tracking-tight leading-[1.12]">
-              Financial Clarity.
-              <br />
-              Smarter Decisions.
-              <br />
-              <span className="text-[#F97316]">Stronger Future.</span>
+            {/* Headline */}
+            <h1 className="text-2xl sm:text-4xl font-black text-[#0B1B3D] tracking-tight leading-[1.14]">
+              The Right Financial Guidance{" "}
+              <span className="inline">
+                Starts with the{" "}
+                <span className="text-[#F97316] font-handwriting italic font-normal text-3xl sm:text-5xl inline-block -rotate-1">
+                  Truth.
+                </span>
+              </span>
             </h1>
 
-            {/* Subheading / Description */}
-            <p className="mt-5 sm:mt-6 text-sm sm:text-base lg:text-[17px] text-[#64748B] leading-relaxed max-w-xl font-normal">
-              Expert financial consultation for your investment planning, loans,
-              insurance and wealth guidance. We help you plan today for a more
-              secure tomorrow.
+            <p className="mt-1 text-xs sm:text-sm font-semibold text-[#475569]">
+              Loan syndication &amp; financial advisory trusted by borrowers across Haryana.
             </p>
 
-            {/* Call to action buttons */}
-            <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-4">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-[#F97316] to-[#FB923C] hover:from-[#EA580C] hover:to-[#F97316] text-white font-semibold text-sm sm:text-base shadow-lg shadow-orange-500/25 hover:shadow-orange-500/35 transition-all flex items-center gap-2.5 cursor-pointer group"
-              >
-                <span>Book a Consultation</span>
-                <svg
-                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.5"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-              </button>
+            {/* Side-by-side: Stats on Left + Robot Mascot on Right */}
+            <div className="mt-4 grid grid-cols-12 gap-2 items-center w-full">
+              {/* Left Column: 3 Stacked Stats */}
+              <div className="col-span-7 flex flex-col justify-center space-y-3 pr-1">
+                <div className="space-y-2.5">
+                  <div>
+                    <div className="text-lg xs:text-xl font-black text-[#0B1B3D] tracking-tight leading-none">
+                      5+ Loan Types
+                    </div>
+                    <div className="text-[10px] xs:text-[11px] font-medium text-[#64748B] mt-0.5">
+                      Home, Business, LAP &amp; Auto
+                    </div>
+                  </div>
 
-              <button
-                onClick={() => {
-                  const el = document.getElementById("services");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="px-7 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-[#0B1B3D] font-semibold text-sm sm:text-base transition-all cursor-pointer shadow-sm"
-              >
-                Explore Services
-              </button>
-            </div>
+                  <div>
+                    <div className="text-lg xs:text-xl font-black text-[#0B1B3D] tracking-tight leading-none">
+                      100% Truth First
+                    </div>
+                    <div className="text-[10px] xs:text-[11px] font-medium text-[#64748B] mt-0.5">
+                      Zero Unrealistic Commitments
+                    </div>
+                  </div>
 
-            {/* Trust Badges Row */}
-            <div className="mt-10 sm:mt-12 flex flex-wrap items-center gap-5 sm:gap-7 pt-4">
-              {/* Badge 1: Trusted Guidance */}
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full border border-orange-400/80 bg-orange-50 flex items-center justify-center text-orange-500 flex-shrink-0">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="12" cy="12" r="9" />
-                    <circle cx="12" cy="12" r="3" fill="currentColor" />
-                  </svg>
+                  <div>
+                    <div className="text-lg xs:text-xl font-black text-[#0B1B3D] tracking-tight leading-none">
+                      Rohtak, HR
+                    </div>
+                    <div className="text-[10px] xs:text-[11px] font-medium text-[#64748B] mt-0.5">
+                      Led by Shubham Jain
+                    </div>
+                  </div>
                 </div>
-                <span className="text-xs sm:text-[13px] font-semibold text-[#0B1B3D]">
-                  Trusted Guidance
-                </span>
-              </div>
 
-              {/* Badge 2: Personalized Solutions */}
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full border border-orange-400/80 bg-orange-50 flex items-center justify-center text-orange-500 flex-shrink-0">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <span className="text-xs sm:text-[13px] font-semibold text-[#0B1B3D]">
-                  Personalized Solutions
-                </span>
-              </div>
-
-              {/* Badge 3: Transparent Advice */}
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-full border border-orange-400/80 bg-orange-50 flex items-center justify-center text-orange-500 flex-shrink-0">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <span className="text-xs sm:text-[13px] font-semibold text-[#0B1B3D]">
-                  Transparent Advice
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Clean Transparent 3D Mascot Graphic */}
-          <div className="lg:col-span-5 relative flex items-center justify-center pt-4 lg:pt-0">
-            <div className="relative w-full max-w-[360px] sm:max-w-[420px] xl:max-w-[450px] flex items-center justify-center">
-              
-              {/* Soft brand-matched ambient glow in background */}
-              <div className="absolute inset-2 sm:inset-4 rounded-full bg-gradient-to-tr from-sky-100/50 via-amber-100/30 to-orange-100/40 blur-3xl animate-pulse-glow pointer-events-none" />
-
-              {/* The Bespoke AI 3D Mascot Graphic with Smooth Levitation */}
-              <div className="relative z-10 w-full flex items-center justify-center animate-float-robot">
-                <Image
-                  src="/first-truth-robot.jpg"
-                  alt="First Truth AI Financial Mascot"
-                  width={600}
-                  height={600}
-                  priority
-                  className="w-full h-auto object-contain mix-blend-multiply select-none"
-                />
-              </div>
-
-              {/* "Plan Save Grow" Handwritten Callout neatly positioned on the right */}
-              <div className="absolute -right-2 sm:-right-6 md:-right-10 top-1/2 -translate-y-1/2 z-20 pointer-events-none select-none animate-float-badge-1">
-                <div className="flex flex-col items-start leading-[1.05] text-[#0B1B3D] font-handwriting text-3xl sm:text-4xl xl:text-5xl font-bold rotate-[-3deg] drop-shadow-md">
-                  <span className="hover:text-[#F97316] transition-colors">Plan</span>
-                  <span className="ml-2.5 hover:text-[#F97316] transition-colors">Save</span>
-                  <span className="ml-5 text-[#F97316]">Grow</span>
-                  {/* Swoosh Underline */}
-                  <svg
-                    className="w-24 sm:w-32 h-6 text-[#F97316] mt-1 -ml-1 animate-pulse"
-                    viewBox="0 0 100 20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
+                {/* Mobile CTA Buttons */}
+                <div className="pt-1 flex flex-col gap-2 w-full">
+                  <Link
+                    href="/services"
+                    className="w-full py-2.5 px-4 rounded-full bg-gradient-to-r from-[#F97316] to-[#FB923C] text-white font-bold text-xs shadow-md shadow-orange-500/25 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-transform text-center"
                   >
-                    <path d="M5 12 Q 50 18 95 6" />
-                  </svg>
+                    <span>Explore Loan Services</span>
+                    <span>→</span>
+                  </Link>
+                  <button
+                    onClick={() => openModal()}
+                    className="w-full py-2.5 px-4 rounded-full bg-white border border-slate-300 text-[#0B1B3D] font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
+                  >
+                    <span>Talk to Our Team</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  </button>
                 </div>
               </div>
 
+              {/* Right Column: 3D Robot Mascot */}
+              <div className="col-span-5 relative flex items-center justify-center">
+                <div className="relative w-full max-w-[155px] xs:max-w-[175px] flex items-center justify-center select-none">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-400/25 via-amber-300/15 to-sky-300/20 blur-xl" />
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-20 xs:w-24 h-2 rounded-[100%] bg-slate-900/15 blur-sm" />
+                  <div className="relative z-10 animate-float-robot w-full flex items-center justify-center">
+                    <Image
+                      src="/hero-robo.png"
+                      alt="First Truth Mascot"
+                      width={320}
+                      height={460}
+                      priority
+                      unoptimized
+                      className="w-full h-auto object-contain drop-shadow-[0_12px_24px_rgba(11,27,61,0.2)]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Narrative & Philosophy on Mobile (Below Mascot) */}
+            <div className="mt-6 space-y-3.5">
+              <p className="text-xs text-[#475569] leading-relaxed">
+                Making financial decisions becomes easier when you understand your options. First Truth Finance Consultations helps individuals, salaried professionals, self-employed applicants, and business owners explore loan options and navigate the documentation process.
+              </p>
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-50/80 via-white to-sky-50/60 border border-orange-200/90 shadow-sm w-full">
+                <div className="text-[10px] font-bold text-[#F97316] uppercase tracking-wider mb-1">
+                  Our Brand Philosophy
+                </div>
+                <div className="text-sm font-extrabold text-[#0B1B3D] tracking-tight">
+                  Truth First. Transparent Guidance. Informed Decisions.
+                </div>
+                <p className="text-xs text-[#64748B] mt-1">
+                  Clear communication about loan eligibility, documentation clarity, and applicable lender terms.
+                </p>
+              </div>
             </div>
           </div>
 
+          {/* ========================================================= */}
+          {/* DESKTOP VIEW (hidden lg:grid): Zero Gap, Full Balance     */}
+          {/* ========================================================= */}
+          <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-12 items-center w-full">
+
+            {/* Left Column: Full Content with Zero Gaps */}
+            <div className="col-span-7 flex flex-col items-start w-full">
+              {/* Brand Pill */}
+              <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-orange-50 border border-orange-200/80">
+                <span className="w-2 h-2 rounded-full bg-[#F97316] animate-pulse" />
+                <span className="text-xs font-bold tracking-wider text-[#0B1B3D] uppercase">
+                  FIRST TRUTH FINANCE CONSULTATIONS • ROHTAK, HARYANA
+                </span>
+              </div>
+
+              {/* Headline */}
+              <h1 className="text-4xl lg:text-[48px] xl:text-[54px] font-extrabold text-[#0B1B3D] tracking-tight leading-[1.14]">
+                The Right Financial Guidance{" "}
+                <span className="inline">
+                  Starts with the{" "}
+                  <span className="text-[#F97316] font-handwriting italic font-normal text-5xl lg:text-6xl inline-block -rotate-1">
+                    Truth.
+                  </span>
+                </span>
+              </h1>
+
+              {/* Subheading & Narrative Paragraphs */}
+              <p className="mt-3 text-base text-[#475569] leading-relaxed max-w-2xl font-normal">
+                Making financial decisions becomes easier when you understand your options. First Truth Finance Consultations helps individuals, salaried professionals, self-employed applicants, and business owners explore loan options and navigate the documentation process.
+              </p>
+              <p className="mt-2 text-sm text-[#64748B] leading-relaxed max-w-2xl font-normal">
+                From home loans and business financing to loans against property and credit score guidance, our approach focuses on understanding your requirements and helping you explore suitable financial solutions.
+              </p>
+
+              {/* 3 Horizontal Stat Cards on Desktop: Bridges the Width! */}
+              <div className="mt-6 grid grid-cols-3 gap-4 w-full max-w-2xl p-4 rounded-2xl bg-gradient-to-r from-orange-50/70 via-white to-sky-50/50 border border-orange-100 shadow-xs">
+                <div className="border-l-2 border-[#F97316] pl-3.5">
+                  <div className="text-2xl font-black text-[#0B1B3D] tracking-tight leading-none">
+                    5+ Types
+                  </div>
+                  <div className="text-xs font-semibold text-[#64748B] mt-1">
+                    Loan Categories
+                  </div>
+                </div>
+
+                <div className="border-l-2 border-[#F97316] pl-3.5">
+                  <div className="text-2xl font-black text-[#0B1B3D] tracking-tight leading-none">
+                    100%
+                  </div>
+                  <div className="text-xs font-semibold text-[#64748B] mt-1">
+                    Truth-First Guidance
+                  </div>
+                </div>
+
+                <div className="border-l-2 border-[#F97316] pl-3.5">
+                  <div className="text-2xl font-black text-[#0B1B3D] tracking-tight leading-none">
+                    Rohtak, HR
+                  </div>
+                  <div className="text-xs font-semibold text-[#64748B] mt-1">
+                    Led by Shubham Jain
+                  </div>
+                </div>
+              </div>
+
+              {/* Desktop CTA Buttons */}
+              <div className="mt-6 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/services"
+                  className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#F97316] to-[#FB923C] hover:from-[#EA580C] hover:to-[#F97316] text-white font-semibold text-sm sm:text-base shadow-lg shadow-orange-500/25 hover:shadow-orange-500/35 transition-all flex items-center gap-2.5 cursor-pointer group"
+                >
+                  <span>Explore Loan Services</span>
+                  <svg
+                    className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+
+                <button
+                  onClick={() => openModal()}
+                  className="px-8 py-3.5 rounded-full bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-[#0B1B3D] font-semibold text-sm sm:text-base transition-all cursor-pointer shadow-sm flex items-center gap-2"
+                >
+                  <span>Talk to Our Team</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                </button>
+              </div>
+
+              {/* Philosophy Callout Card */}
+              <div className="mt-6 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs max-w-2xl w-full">
+                <div className="text-[11px] font-bold text-[#F97316] uppercase tracking-wider mb-0.5">
+                  Our Brand Philosophy
+                </div>
+                <div className="text-base font-extrabold text-[#0B1B3D] tracking-tight">
+                  Truth First. Transparent Guidance. Informed Decisions.
+                </div>
+                <p className="text-xs text-[#64748B] mt-0.5">
+                  Clear communication about loan eligibility, documentation clarity, and applicable lender terms.
+                </p>
+              </div>
+
+              {/* Trust Badges Row */}
+              <div className="mt-6 flex flex-wrap items-center gap-6 pt-3 border-t border-slate-100 w-full max-w-2xl">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-100 text-[#F97316] flex items-center justify-center text-xs font-bold">✓</div>
+                  <span className="text-[13px] font-semibold text-[#0B1B3D]">Truth First</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-100 text-[#F97316] flex items-center justify-center text-xs font-bold">✓</div>
+                  <span className="text-[13px] font-semibold text-[#0B1B3D]">Transparent Guidance</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-100 text-[#F97316] flex items-center justify-center text-xs font-bold">✓</div>
+                  <span className="text-[13px] font-semibold text-[#0B1B3D]">Documentation Clarity</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-orange-100 text-[#F97316] flex items-center justify-center text-xs font-bold">✓</div>
+                  <span className="text-[13px] font-semibold text-[#0B1B3D]">Rohtak, Haryana Hub</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: 3D Robot Mascot (Full Height, Floating Badges) */}
+            <div className="col-span-5 relative flex items-center justify-center pt-4">
+              <div
+                onMouseMove={handleMouseMove}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => {
+                  setIsHovered(false);
+                  setMousePos({ x: 0, y: 0 });
+                }}
+                className="relative w-full max-w-[380px] sm:max-w-[420px] xl:max-w-[460px] flex flex-col items-center justify-center cursor-pointer select-none perspective-1000 py-6"
+              >
+                <div
+                  className="relative w-full flex items-center justify-center transform-style-3d transition-transform duration-200 ease-out"
+                  style={{
+                    transform: isHovered
+                      ? `rotateY(${mousePos.x * 8}deg) rotateX(${-mousePos.y * 8}deg)`
+                      : "rotateY(0deg) rotateX(0deg)",
+                  }}
+                >
+                  {/* Ambient Glow */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-[320px] sm:w-[380px] h-[320px] sm:h-[380px] rounded-full bg-gradient-to-tr from-amber-100/50 via-orange-100/35 to-sky-100/40 blur-3xl animate-pulse-glow" />
+                  </div>
+
+                  {/* Ground Shadow */}
+                  <div className="absolute -bottom-2 sm:-bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none z-0">
+                    <div className="w-48 sm:w-56 h-4 sm:h-5 rounded-[100%] bg-slate-800/15 blur-md animate-pedestal-shadow" />
+                  </div>
+
+                  {/* Mascot Image */}
+                  <div className="relative z-10 w-full flex items-center justify-center animate-float-robot">
+                    <Image
+                      src="/hero-robo.png"
+                      alt="First Truth Finance Mascot"
+                      width={520}
+                      height={780}
+                      priority
+                      unoptimized
+                      className="w-[300px] sm:w-[340px] xl:w-[380px] h-auto object-contain drop-shadow-[0_18px_30px_rgba(11,27,61,0.14)] select-none transition-transform duration-300 hover:scale-[1.01]"
+                    />
+                  </div>
+
+                  {/* Floating Badge 1: Truth First */}
+                  <div className="absolute -left-2 sm:-left-6 bottom-12 sm:bottom-16 z-20 pointer-events-none select-none animate-float-badge-2">
+                    <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-xl px-3.5 py-2.5 flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-[#F97316] flex-shrink-0">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <span className="text-xs sm:text-[13px] font-bold text-[#0B1B3D] block leading-tight">
+                          Truth First
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">
+                          Zero False Commitments
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating Badge 2: Founder FTFC */}
+                  <div className="absolute -right-2 sm:-right-8 top-36 sm:top-40 z-20 pointer-events-none select-none animate-float-badge-3">
+                    <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-xl px-3.5 py-2.5 flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200/80 flex items-center justify-center text-sky-600 flex-shrink-0 font-bold text-xs">
+                        FTFC
+                      </div>
+                      <div>
+                        <span className="text-xs sm:text-[13px] font-bold text-[#0B1B3D] block leading-tight">
+                          Led by Shubham Jain
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">
+                          Rohtak, Haryana
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
         </section>
 
         {/* ========================================================= */}
         {/* METRICS BANNER CARD */}
         {/* ========================================================= */}
         <section className="mt-14 sm:mt-18 lg:mt-20 w-full">
-          <div className="bg-[#F8FAFC]/90 border border-slate-200/80 rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-md transition-shadow p-6 sm:p-8">
+          <div className="bg-[#F8FAFC]/90 border border-slate-200/80 rounded-2xl sm:rounded-3xl shadow-sm p-6 sm:p-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-200/80">
-              
-              {/* Stat 1: 10+ Years Experience */}
+
               <div className="flex items-center gap-4 sm:gap-5 pt-3 sm:pt-0 md:px-4 first:pt-0 first:pl-0">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-[#F97316] flex-shrink-0 shadow-sm">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                    <circle cx="8" cy="14" r="1" fill="currentColor" />
-                    <circle cx="12" cy="14" r="1" fill="currentColor" />
-                    <circle cx="16" cy="14" r="1" fill="currentColor" />
-                    <circle cx="8" cy="18" r="1" fill="currentColor" />
-                    <circle cx="12" cy="18" r="1" fill="currentColor" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
-                    10+
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
-                    Years Experience
-                  </div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-[#0B1B3D] tracking-tight">Rohtak, HR</div>
+                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">Consulting &amp; Syndication</div>
                 </div>
               </div>
 
-              {/* Stat 2: 500+ Happy Clients */}
               <div className="flex items-center gap-4 sm:gap-5 pt-3 sm:pt-0 md:px-6">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-[#F97316] flex-shrink-0 shadow-sm">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
-                    500+
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
-                    Happy Clients
-                  </div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">5+ Loans</div>
+                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">Home, Business, LAP &amp; More</div>
                 </div>
               </div>
 
-              {/* Stat 3: ₹100Cr+ Assets Under Advice */}
               <div className="flex items-center gap-4 sm:gap-5 pt-3 sm:pt-0 md:px-6">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-[#F97316] flex-shrink-0 shadow-sm">
-                  <span className="font-bold text-xl sm:text-2xl text-[#F97316]">₹</span>
+                  <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
-                    ₹100Cr+
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
-                    Assets Under Advice
-                  </div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-[#0B1B3D] tracking-tight">Shubham Jain</div>
+                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">Founder &amp; Principal</div>
                 </div>
               </div>
 
-              {/* Stat 4: 100% Client Focus */}
               <div className="flex items-center gap-4 sm:gap-5 pt-3 sm:pt-0 md:px-6">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-[#F97316] flex-shrink-0 shadow-sm">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
@@ -543,12 +510,8 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
-                    100%
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
-                    Client Focus
-                  </div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">100%</div>
+                  <div className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">Truth &amp; Clarity</div>
                 </div>
               </div>
 
@@ -557,444 +520,417 @@ export default function Home() {
         </section>
 
         {/* ========================================================= */}
-        {/* SECTION: OUR SERVICES */}
+        {/* CONCISE ABOUT US OVERVIEW */}
         {/* ========================================================= */}
-        <section id="services" className="mt-20 sm:mt-28">
-          {/* Section Header */}
-          <div className="flex flex-col items-start">
-            <div className="inline-flex items-center gap-2 mb-2">
-              <span className="w-5 sm:w-6 h-[2.5px] bg-[#F97316] rounded-full" />
-              <span className="text-[11px] sm:text-xs font-bold tracking-widest text-[#0B1B3D] uppercase">
-                OUR SERVICES
-              </span>
+        <section className="mt-20 sm:mt-28">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-gradient-to-r from-slate-50 via-white to-orange-50/40 rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm">
+            <div className="lg:col-span-8">
+              <div className="inline-flex items-center gap-2 mb-2">
+                <span className="w-5 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="text-xs font-bold tracking-widest text-[#0B1B3D] uppercase">
+                  ABOUT FIRST TRUTH FINANCE
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
+                Financial Consulting Built on Transparency &amp; Integrity
+              </h2>
+              <p className="mt-3 text-sm sm:text-base text-[#475569] leading-relaxed">
+                First Truth Finance Consultations (FTFC) is a financial consulting and loan syndication firm based in Rohtak, Haryana. Founded and led by <strong>Shubham Jain</strong>, we help borrowers understand their requirements, review relevant lending options, organize documentation, and navigate the application process with greater clarity.
+              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/about"
+                  className="px-6 py-2.5 rounded-full bg-[#0B1B3D] hover:bg-[#1E293B] text-white text-xs sm:text-sm font-semibold transition-all inline-flex items-center gap-2"
+                >
+                  <span>Learn More About Us</span>
+                  <span>→</span>
+                </Link>
+                <button
+                  onClick={() => openModal()}
+                  className="text-xs sm:text-sm font-bold text-[#F97316] hover:text-[#EA580C] cursor-pointer"
+                >
+                  Connect with Shubham Jain
+                </button>
+              </div>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0B1B3D] tracking-tight">
-              Financial Solutions Designed Around You
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-[#64748B] max-w-3xl leading-relaxed">
-              Comprehensive financial services to help you achieve your goals, at every stage of life.
-            </p>
+
+            <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wider text-[#F97316]">
+                Our Philosophy
+              </div>
+              <div className="text-base font-extrabold text-[#0B1B3D] mt-1">
+                Truth First
+              </div>
+              <p className="mt-2 text-xs text-slate-500 leading-relaxed">
+                Clear communication before applying. Understand lender requirements, interest terms, and documentation without misleading assurances.
+              </p>
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <span>Principal Consultant:</span>
+                <span className="font-bold text-[#0B1B3D]">Shubham Jain</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* FEATURED LOAN SERVICES SECTION */}
+        {/* ========================================================= */}
+        <section className="mt-20 sm:mt-28">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 mb-2">
+                <span className="w-5 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="text-xs font-bold tracking-widest text-[#0B1B3D] uppercase">
+                  OUR SERVICES
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B1B3D] tracking-tight">
+                Featured Loan Consultations
+              </h2>
+              <p className="mt-1 text-sm text-[#64748B]">
+                Explore financing options tailored to your personal or commercial requirements.
+              </p>
+            </div>
+            <Link
+              href="/services"
+              className="px-5 py-2.5 rounded-full border border-slate-300 text-xs sm:text-sm font-bold text-[#0B1B3D] hover:bg-slate-50 transition-all inline-flex items-center gap-1.5 self-start sm:self-auto"
+            >
+              <span>Explore All Loan Services</span>
+              <span>→</span>
+            </Link>
           </div>
 
-          {/* 5 Service Cards Grid */}
-          <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
-            {services.map((item, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredServices.map((service) => (
               <div
-                key={index}
-                className="bg-white rounded-2xl border border-slate-200/90 hover:border-orange-300 p-5 sm:p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 group"
+                key={service.href}
+                className="bg-white rounded-3xl border border-slate-200/90 hover:border-orange-300 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
               >
                 <div>
-                  {/* Service Icon */}
-                  <div className="w-11 h-11 rounded-2xl bg-sky-50 border border-sky-100/80 flex items-center justify-center text-[#0B1B3D] group-hover:bg-orange-50 group-hover:text-[#F97316] group-hover:border-orange-200 transition-colors mb-4">
-                    {item.icon}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-orange-50 group-hover:border-orange-200 transition-colors">
+                      {service.icon}
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-[10.5px] font-bold tracking-wide uppercase bg-slate-100 text-slate-700">
+                      {service.badge}
+                    </span>
                   </div>
-                  {/* Service Title */}
-                  <h3 className="text-base font-bold text-[#0B1B3D] leading-snug group-hover:text-[#F97316] transition-colors">
-                    {item.title}
+
+                  <h3 className="text-xl font-bold text-[#0B1B3D] group-hover:text-[#F97316] transition-colors leading-snug">
+                    {service.title}
                   </h3>
-                  {/* Service Description */}
-                  <p className="mt-2 text-xs sm:text-[13px] text-[#64748B] leading-relaxed">
-                    {item.description}
+                  <div className="text-xs font-medium text-slate-500 mt-1">
+                    {service.tagline}
+                  </div>
+                  <p className="mt-3 text-xs sm:text-[13px] text-[#475569] leading-relaxed">
+                    {service.description}
                   </p>
                 </div>
 
-                {/* Learn More link */}
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <Link
+                    href={service.href}
+                    className="text-xs sm:text-sm font-bold text-[#F97316] hover:text-[#EA580C] inline-flex items-center gap-1 group/btn"
+                  >
+                    <span>View Eligibility &amp; Details</span>
+                    <span className="transition-transform group-hover/btn:translate-x-1">→</span>
+                  </Link>
+                  <button
+                    onClick={() => openModal(service.title)}
+                    className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold cursor-pointer"
+                  >
+                    Quick Consult
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {/* Custom Requirement Card */}
+            <div className="bg-gradient-to-br from-[#0B1B3D] to-[#162a52] text-white rounded-3xl p-6 flex flex-col justify-between shadow-lg relative overflow-hidden group">
+              <div>
+                <span className="px-3 py-1 rounded-full text-[10.5px] font-bold tracking-wide uppercase bg-white/10 text-orange-300">
+                  Custom Syndication
+                </span>
+                <h3 className="text-xl font-bold mt-4 leading-snug">
+                  Unsure Which Loan Fits Your Profile?
+                </h3>
+                <p className="mt-2 text-xs sm:text-[13px] text-slate-300 leading-relaxed">
+                  Discuss your specific financing requirement directly with Shubham Jain and our consulting desk in Rohtak.
+                </p>
+                <div className="mt-4 p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-300 space-y-1">
+                  <div>✓ Multi-Lender Assessment</div>
+                  <div>✓ Document Pre-check &amp; Eligibility</div>
+                  <div>✓ Realistic Turnaround Expectations</div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-white/10">
                 <button
-                  onClick={() => openServiceModal(item.title)}
-                  className="mt-5 text-xs font-bold text-[#F97316] hover:text-[#EA580C] inline-flex items-center gap-1.5 cursor-pointer self-start group/btn"
+                  onClick={() => openModal("General Loan Consultation")}
+                  className="w-full py-2.5 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer text-center"
                 >
-                  <span>Learn More</span>
-                  <span className="transition-transform group-hover/btn:translate-x-1">→</span>
+                  Discuss Custom Requirement →
                 </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* 5-STEP CONSULTATION PROCESS PREVIEW */}
+        {/* ========================================================= */}
+        <section id="process" className="mt-20 sm:mt-28">
+          <div className="flex flex-col items-start max-w-3xl mb-10">
+            <div className="inline-flex items-center gap-2 mb-2">
+              <span className="w-5 h-[2.5px] bg-[#F97316] rounded-full" />
+              <span className="text-xs font-bold tracking-widest text-[#0B1B3D] uppercase">
+                REALISTIC CUSTOMER JOURNEY
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B1B3D] tracking-tight">
+              Our Loan Consultation Process
+            </h2>
+            <p className="mt-2 text-sm text-[#64748B] leading-relaxed">
+              Step-by-step guidance without false guarantees or artificial turnaround times.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {processSteps.map((step) => (
+              <div
+                key={step.step}
+                className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <span className="text-2xl font-black text-slate-200 block mb-2">
+                    {step.step}
+                  </span>
+                  <h3 className="text-sm font-bold text-[#0B1B3D] leading-snug">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-xs text-[#64748B] leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* ========================================================= */}
+        {/* INTERACTIVE EMI CALCULATOR PREVIEW */}
         {/* ========================================================= */}
-        {/* SECTION: ADVISOR APP SHOWCASE (MATCHING USER REFERENCE) */}
-        {/* ========================================================= */}
-        <section id="why-us" className="mt-24 sm:mt-32">
-          {/* Main Advisor App Header */}
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#0B1B3D] tracking-tight">
-              First Truth Advisor App
-            </h2>
-            <p className="mt-2.5 text-base sm:text-lg text-[#64748B] font-medium">
-              Trusted partner for your insurance & wealth business
-            </p>
-          </div>
+        <section className="mt-20 sm:mt-28">
+          <div className="bg-[#F8FAFC] rounded-3xl border border-slate-200/90 p-6 sm:p-10 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            
-            {/* Left Column: Hand holding Smartphone Mockup + Rating & Play Store */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center">
-              <div className="relative w-full max-w-[320px] sm:max-w-[370px] flex items-center justify-center drop-shadow-xl transition-transform hover:scale-[1.02] duration-300">
-                <Image
-                  src="/advisor-phone-hand.png"
-                  alt="First Truth Advisor App in Hand"
-                  width={600}
-                  height={1000}
-                  className="w-full h-auto object-contain max-h-[560px]"
-                  priority
-                />
-              </div>
+              <div className="lg:col-span-7 flex flex-col">
+                <div className="inline-flex items-center gap-2 mb-2">
+                  <span className="w-5 h-[2.5px] bg-[#F97316] rounded-full" />
+                  <span className="text-xs font-bold tracking-widest text-[#0B1B3D] uppercase">
+                    FINANCIAL PLANNING TOOL
+                  </span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
+                  Loan EMI &amp; Repayment Estimator
+                </h2>
+                <p className="mt-1 text-xs sm:text-sm text-[#64748B]">
+                  Estimate monthly installments before scheduling your consultation.
+                </p>
 
-              {/* Rating and Google Play badge directly under the phone */}
-              <div className="flex items-center justify-between w-full max-w-[300px] sm:max-w-[340px] mt-4 px-2">
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold text-[#0B1B3D]">4.8 rating</span>
-                  <div className="flex items-center text-amber-400 text-sm mt-0.5 tracking-tight">
-                    {"★★★★★"}
+                {/* Slider: Loan Amount */}
+                <div className="mt-6">
+                  <div className="flex justify-between items-center text-xs sm:text-sm font-semibold mb-2">
+                    <span className="text-[#0B1B3D]">Loan Amount (₹)</span>
+                    <span className="text-[#F97316] font-bold text-base">
+                      ₹{calcAmount.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={100000}
+                    max={20000000}
+                    step={50000}
+                    value={calcAmount}
+                    onChange={(e) => setCalcAmount(Number(e.target.value))}
+                    className="w-full accent-[#F97316] cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[11px] text-slate-400 mt-1">
+                    <span>₹1 Lakh</span>
+                    <span>₹1 Crore</span>
+                    <span>₹2 Crore</span>
                   </div>
                 </div>
 
-                <a
-                  href="#contact"
-                  onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center gap-2.5 px-4 py-2 bg-black text-white rounded-xl shadow-md hover:bg-slate-900 transition-all cursor-pointer hover:shadow-lg"
-                >
-                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
-                    <path d="M3.609 1.814L13.793 12 3.61 22.186A1.666 1.666 0 0 1 3 20.975V3.025c0-.457.227-.887.609-1.211z" fill="#00E676" />
-                    <path d="M17.18 8.613l-3.387 3.387 3.387 3.387 3.824-2.185c1.096-.627 1.096-2.762 0-3.389l-3.824-2.2z" fill="#FFD600" />
-                    <path d="M13.793 12L3.609 1.814a1.696 1.696 0 0 1 .945-.26c.582 0 1.144.312 1.542.54l11.084 6.519L13.793 12z" fill="#00B0FF" />
-                    <path d="M13.793 12l3.387 3.387-11.084 6.519c-.398.228-.96.54-1.542.54a1.696 1.696 0 0 1-.945-.26L13.793 12z" fill="#FF3D00" />
-                  </svg>
-                  <div className="flex flex-col text-left leading-none">
-                    <span className="text-[9px] uppercase tracking-wider text-slate-300">GET IT ON</span>
-                    <span className="text-xs font-bold text-white tracking-tight mt-0.5">Google Play</span>
+                {/* Slider: Interest Rate */}
+                <div className="mt-5">
+                  <div className="flex justify-between items-center text-xs sm:text-sm font-semibold mb-2">
+                    <span className="text-[#0B1B3D]">Interest Rate (% p.a.)</span>
+                    <span className="text-[#F97316] font-bold text-base">{calcRate}%</span>
                   </div>
-                </a>
-              </div>
-            </div>
-
-            {/* Right Column: 4 Stacked Horizontal Feature Cards */}
-            <div className="lg:col-span-7 flex flex-col gap-4 sm:gap-4.5">
-              
-              {/* Card 1: Sell insurance, mutual funds, loans & more */}
-              <div className="bg-[#F0F9FA] rounded-2xl p-5 sm:p-6 border border-[#DCF2F5] hover:border-cyan-300 hover:shadow-md transition-all flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 h-12 rounded-xl bg-cyan-100/70 border border-cyan-200/60 flex items-center justify-center flex-shrink-0 text-cyan-600 group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-[17px] font-bold text-[#0B1B3D] mb-1 group-hover:text-cyan-700 transition-colors">
-                    Sell insurance, mutual funds, loans &amp; more
-                  </h3>
-                  <p className="text-xs sm:text-[13.5px] text-[#64748B] leading-relaxed">
-                    Get instant access to a wide range of insurance, investment, credit, and loan products.
-                  </p>
-                </div>
-              </div>
-
-              {/* Card 2: Marketing tools to grow your business */}
-              <div className="bg-[#F0F9FA] rounded-2xl p-5 sm:p-6 border border-[#DCF2F5] hover:border-amber-300 hover:shadow-md transition-all flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 h-12 rounded-xl bg-amber-100/70 border border-amber-200/60 flex items-center justify-center flex-shrink-0 text-amber-600 group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-[17px] font-bold text-[#0B1B3D] mb-1 group-hover:text-amber-700 transition-colors">
-                    Marketing tools to grow your business
-                  </h3>
-                  <p className="text-xs sm:text-[13.5px] text-[#64748B] leading-relaxed">
-                    Effortless customer management with personalised shareable content for lead generation.
-                  </p>
-                </div>
-              </div>
-
-              {/* Card 3: Get support from quotes to claims */}
-              <div className="bg-[#F0F9FA] rounded-2xl p-5 sm:p-6 border border-[#DCF2F5] hover:border-emerald-300 hover:shadow-md transition-all flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 h-12 rounded-xl bg-emerald-100/70 border border-emerald-200/60 flex items-center justify-center flex-shrink-0 text-emerald-600 group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-[17px] font-bold text-[#0B1B3D] mb-1 group-hover:text-emerald-700 transition-colors">
-                    Get support from quotes to claims
-                  </h3>
-                  <p className="text-xs sm:text-[13.5px] text-[#64748B] leading-relaxed">
-                    A dedicated relationship manager and an expert support team.
-                  </p>
-                </div>
-              </div>
-
-              {/* Card 4: Training on latest products & sales skills */}
-              <div className="bg-[#F0F9FA] rounded-2xl p-5 sm:p-6 border border-[#DCF2F5] hover:border-rose-300 hover:shadow-md transition-all flex items-start gap-4 sm:gap-5 group">
-                <div className="w-12 h-12 rounded-xl bg-rose-100/70 border border-rose-200/60 flex items-center justify-center flex-shrink-0 text-rose-500 group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-[17px] font-bold text-[#0B1B3D] mb-1 group-hover:text-rose-700 transition-colors">
-                    Training on latest products &amp; sales skills
-                  </h3>
-                  <p className="text-xs sm:text-[13.5px] text-[#64748B] leading-relaxed">
-                    PoSP training made easy with 500+ videos, live webinars, and classroom sessions.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* ========================================================= */}
-          {/* SUB-SECTION: CONSUMER APP (MATCHING USER REFERENCE) */}
-          {/* ========================================================= */}
-          <div className="mt-28 sm:mt-36">
-            {/* Header matching user reference */}
-            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-              <h3 className="text-2xl sm:text-3xl lg:text-[36px] font-bold text-[#0B1B3D] tracking-tight">
-                First Truth Consumer App
-              </h3>
-              <p className="mt-2 text-xl sm:text-2xl lg:text-[26px] font-normal text-[#1E293B]">
-                All your insurance in one place
-              </p>
-            </div>
-
-            {/* 3 Reference Phone Screens in Exact Sequence */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto px-4 items-end">
-              
-              {/* Phone 1: Policies at your fingertips */}
-              <div className="flex flex-col items-center text-center group">
-                <div className="w-full flex items-end justify-center h-[260px] sm:h-[290px]">
-                  <Image
-                    src="/consumer-phone-1.png"
-                    alt="Policies at your fingertips"
-                    width={250}
-                    height={260}
-                    className="w-auto h-full max-h-[260px] sm:max-h-[290px] object-contain object-bottom hover:scale-105 transition-transform duration-300"
-                    priority
+                  <input
+                    type="range"
+                    min={6.5}
+                    max={20}
+                    step={0.1}
+                    value={calcRate}
+                    onChange={(e) => setCalcRate(Number(e.target.value))}
+                    className="w-full accent-[#F97316] cursor-pointer"
                   />
                 </div>
-                <h4 className="text-base sm:text-[17px] font-bold text-[#0B1B3D] mt-6 mb-1.5 group-hover:text-[#F97316] transition-colors">
-                  Policies at your fingertips
-                </h4>
-                <p className="text-xs sm:text-[13px] text-[#64748B] leading-relaxed max-w-[260px]">
-                  Track policy benefits, get offline, share them with your family
-                </p>
-              </div>
 
-              {/* Phone 2: We handle your claims */}
-              <div className="flex flex-col items-center text-center group">
-                <div className="w-full flex items-end justify-center h-[260px] sm:h-[290px]">
-                  <Image
-                    src="/consumer-phone-2.png"
-                    alt="We handle your claims"
-                    width={250}
-                    height={260}
-                    className="w-auto h-full max-h-[260px] sm:max-h-[290px] object-contain object-bottom hover:scale-105 transition-transform duration-300"
-                    priority
+                {/* Slider: Tenure */}
+                <div className="mt-5">
+                  <div className="flex justify-between items-center text-xs sm:text-sm font-semibold mb-2">
+                    <span className="text-[#0B1B3D]">Tenure</span>
+                    <span className="text-[#F97316] font-bold text-base">{calcTenure} Years</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={30}
+                    step={1}
+                    value={calcTenure}
+                    onChange={(e) => setCalcTenure(Number(e.target.value))}
+                    className="w-full accent-[#F97316] cursor-pointer"
                   />
                 </div>
-                <h4 className="text-base sm:text-[17px] font-bold text-[#0B1B3D] mt-6 mb-1.5 group-hover:text-[#F97316] transition-colors">
-                  We handle your claims
-                </h4>
-                <p className="text-xs sm:text-[13px] text-[#64748B] leading-relaxed max-w-[260px]">
-                  Experts to guide and handle your claims to get you the best payouts
-                </p>
               </div>
 
-              {/* Phone 3: Renewal reminders & exclusive offers */}
-              <div className="flex flex-col items-center text-center group">
-                <div className="w-full flex items-end justify-center h-[260px] sm:h-[290px]">
-                  <Image
-                    src="/consumer-phone-3.png"
-                    alt="Renewal reminders & exclusive offers"
-                    width={250}
-                    height={260}
-                    className="w-auto h-full max-h-[260px] sm:max-h-[290px] object-contain object-bottom hover:scale-105 transition-transform duration-300"
-                    priority
-                  />
+              {/* Result Preview Box */}
+              <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-md flex flex-col justify-between">
+                <div>
+                  <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                    Estimated Monthly Repayment
+                  </div>
+                  <div className="text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
+                    ₹{monthlyEmi.toLocaleString("en-IN")}
+                    <span className="text-sm font-normal text-slate-500"> / mo</span>
+                  </div>
+
+                  <div className="mt-5 space-y-2.5 pt-4 border-t border-slate-100 text-xs sm:text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Principal:</span>
+                      <span className="font-bold text-[#0B1B3D]">₹{calcAmount.toLocaleString("en-IN")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Total Interest:</span>
+                      <span className="font-bold text-[#F97316]">₹{totalInterest.toLocaleString("en-IN")}</span>
+                    </div>
+                    <div className="flex justify-between pt-2 border-t border-slate-100 font-bold">
+                      <span className="text-[#0B1B3D]">Total Repayable:</span>
+                      <span className="text-[#0B1B3D]">₹{totalPayment.toLocaleString("en-IN")}</span>
+                    </div>
+                  </div>
                 </div>
-                <h4 className="text-base sm:text-[17px] font-bold text-[#0B1B3D] mt-6 mb-1.5 group-hover:text-[#F97316] transition-colors">
-                  Renewal reminders &amp; exclusive offers
-                </h4>
-                <p className="text-xs sm:text-[13px] text-[#64748B] leading-relaxed max-w-[260px]">
-                  Never miss a deadline with personalised alerts and hassle-free renewal options
-                </p>
+
+                <div className="mt-6 flex flex-col gap-2">
+                  <Link
+                    href="/emi-calculator"
+                    className="w-full py-2.5 rounded-full border border-slate-300 hover:bg-slate-50 text-[#0B1B3D] text-xs font-bold text-center transition-colors"
+                  >
+                    Open Full EMI Calculator &amp; Amortization →
+                  </Link>
+                  <button
+                    onClick={() => openModal(`EMI Inquiry (₹${(calcAmount / 100000).toFixed(1)} Lakhs)`)}
+                    className="w-full py-2.5 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-semibold shadow-md transition-all cursor-pointer text-center"
+                  >
+                    Discuss This Loan with Our Team →
+                  </button>
+                </div>
               </div>
 
             </div>
-
-            {/* Centered Google Play Badge */}
-            <div className="flex justify-center mt-12 sm:mt-16">
-              <a
-                href="#contact"
-                onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center gap-3 px-6 py-2.5 bg-black text-white rounded-xl shadow-lg hover:bg-slate-900 hover:shadow-xl transition-all cursor-pointer group hover:scale-105 duration-200"
-              >
-                <svg className="w-6 h-6 flex-shrink-0" viewBox="0 0 24 24">
-                  <path d="M3.609 1.814L13.793 12 3.61 22.186A1.666 1.666 0 0 1 3 20.975V3.025c0-.457.227-.887.609-1.211z" fill="#00E676" />
-                  <path d="M17.18 8.613l-3.387 3.387 3.387 3.387 3.824-2.185c1.096-.627 1.096-2.762 0-3.389l-3.824-2.2z" fill="#FFD600" />
-                  <path d="M13.793 12L3.609 1.814a1.696 1.696 0 0 1 .945-.26c.582 0 1.144.312 1.542.54l11.084 6.519L13.793 12z" fill="#00B0FF" />
-                  <path d="M13.793 12l3.387 3.387-11.084 6.519c-.398.228-.96.54-1.542.54a1.696 1.696 0 0 1-.945-.26L13.793 12z" fill="#FF3D00" />
-                </svg>
-                <div className="flex flex-col text-left leading-none">
-                  <span className="text-[10px] uppercase tracking-wider text-slate-300">GET IT ON</span>
-                  <span className="text-sm font-bold text-white tracking-tight mt-0.5">Google Play</span>
-                </div>
-              </a>
-            </div>
-
           </div>
         </section>
 
-      </main>
-
-      {/* Footer */}
-      <footer className="w-full border-t border-slate-200 bg-slate-50/80 py-8 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 First Truth Finance Consultations. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <a href="#home" className="hover:text-slate-800">Home</a>
-            <a href="#services" className="hover:text-slate-800">Services</a>
-            <a href="#why-us" className="hover:text-slate-800">Why First Truth</a>
-            <button onClick={() => setIsModalOpen(true)} className="text-[#F97316] font-semibold hover:underline">
-              Book Consultation
-            </button>
-          </div>
-        </div>
-      </footer>
-
-      {/* Book Consultation Modal with MongoDB storage */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
-            {/* Modal Header */}
-            <div className="px-6 sm:px-8 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
-              <div>
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#F97316]">
-                  <span className="w-2 h-2 rounded-full bg-[#F97316]" />
-                  Schedule Appointment
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-[#0B1B3D] mt-0.5">
-                  Book Free Consultation
-                </h3>
+        {/* ========================================================= */}
+        {/* CREDIT PROFILE & PARTNER TEASERS */}
+        {/* ========================================================= */}
+        <section className="mt-20 sm:mt-28 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Credit Profile Teaser */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="text-[11px] font-bold text-[#F97316] uppercase tracking-wider mb-1">
+                Credit Awareness
               </div>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#0B1B3D] tracking-tight">
+                Understand Your Credit Profile
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Your credit history plays a vital role in loan assessments. Learn how to review credit reports, identify potential discrepancies, and practice disciplined credit management before applying.
+              </p>
+              <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-500">
+                ⚠️ Credit score improvement is not guaranteed. Corrections require official bureau dispute procedures.
+              </div>
             </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-4">
-              {submitStatus && (
-                <div
-                  className={`p-3.5 rounded-xl text-sm font-medium ${
-                    submitStatus.type === "success"
-                      ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                      : "bg-rose-50 text-rose-800 border border-rose-200"
-                  }`}
-                >
-                  {submitStatus.message}
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Rahul Sharma"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316] text-sm text-slate-800"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="name@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316] text-sm text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+91 98765 43210"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316] text-sm text-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Service Interested In
-                </label>
-                <select
-                  value={formData.serviceType}
-                  onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316] text-sm text-slate-800 bg-white"
-                >
-                  <option value="Investment Planning">Investment Planning</option>
-                  <option value="Insurance & Risk Management">Insurance & Risk Management</option>
-                  <option value="Loans & Credit Solutions">Loans & Credit Solutions</option>
-                  <option value="Wealth & Retirement Planning">Wealth & Retirement Planning</option>
-                  <option value="Tax Planning">Tax Planning</option>
-                  <option value="General Consultation">General Consultation</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Optional Note / Query
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Tell us what you'd like guidance with..."
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316] text-sm text-slate-800 resize-none"
-                />
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-full border border-slate-200 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-6 py-2.5 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold shadow-md shadow-orange-500/25 disabled:opacity-50 cursor-pointer flex items-center gap-2"
-                >
-                  {submitting ? "Booking..." : "Confirm Booking →"}
-                </button>
-              </div>
-            </form>
+            <Link
+              href="/credit-profile"
+              className="mt-6 font-bold text-xs sm:text-sm text-[#F97316] hover:text-[#EA580C] inline-flex items-center gap-1.5"
+            >
+              <span>Explore Credit Profile Guidance</span>
+              <span>→</span>
+            </Link>
           </div>
-        </div>
-      )}
+
+          {/* FI Partner Teaser */}
+          <div className="bg-gradient-to-br from-[#0B1B3D] to-[#1c366e] text-white rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between">
+            <div>
+              <div className="text-[11px] font-bold text-orange-400 uppercase tracking-wider mb-1">
+                DSA Network
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
+                Build Your Financial Services Network
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                First Truth Finance Consultations offers DSA partnership opportunities for financial consultants, local business professionals, and referral agents looking to connect clients with suitable lending options.
+              </p>
+              <div className="mt-4 p-3 rounded-xl bg-white/10 border border-white/15 text-xs text-slate-300">
+                🤝 Application guidance, coordination support, and transparent payout arrangements.
+              </div>
+            </div>
+            <Link
+              href="/partners"
+              className="mt-6 font-bold text-xs sm:text-sm text-orange-400 hover:text-orange-300 inline-flex items-center gap-1.5"
+            >
+              <span>Learn About FI Partnerships</span>
+              <span>→</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* FINAL CONSULTATION CTA BANNER */}
+        {/* ========================================================= */}
+        <section className="mt-20 sm:mt-28 bg-gradient-to-r from-orange-500 via-[#F97316] to-[#EA580C] text-white rounded-3xl p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="max-w-2xl text-center md:text-left">
+            <span className="text-xs font-bold uppercase tracking-wider text-orange-200">
+              Transparent Loan Syndication
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold mt-1 tracking-tight">
+              Ready to Explore Your Financing Options?
+            </h2>
+            <p className="mt-2 text-xs sm:text-sm text-orange-100 leading-relaxed">
+              Speak directly with Shubham Jain and our consulting desk in Rohtak, Haryana. Truth First, zero hidden fees, and realistic eligibility guidance.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+            <button
+              onClick={() => openModal()}
+              className="px-7 py-3.5 rounded-full bg-white text-[#0B1B3D] text-xs sm:text-sm font-bold shadow-lg hover:bg-orange-50 transition-all cursor-pointer"
+            >
+              Book Free Consultation →
+            </button>
+            <Link
+              href="/contact"
+              className="px-6 py-3.5 rounded-full border border-white/40 hover:bg-white/10 text-white text-xs sm:text-sm font-semibold text-center transition-all"
+            >
+              Contact Office
+            </Link>
+          </div>
+        </section>
+
+      </div>
     </div>
   );
 }

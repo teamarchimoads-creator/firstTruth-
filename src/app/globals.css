@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+  --color-navy-950: #071126;
+  --color-navy-900: #0B1B3D;
+  --color-navy-800: #122855;
+  --color-navy-700: #1B3B7A;
+  --color-navy-600: #254F9E;
+  --color-brand-orange: #F97316;
+}
+
+/* Explicit fallback utilities for dark navy and brand orange */
+.bg-navy-950 { background-color: #071126; }
+.bg-navy-900 { background-color: #0B1B3D; }
+.bg-navy-800 { background-color: #122855; }
+.bg-navy-700 { background-color: #1B3B7A; }
+.text-navy-900 { color: #0B1B3D; }
+.text-navy-800 { color: #122855; }
+.border-navy-900 { border-color: #0B1B3D; }
+.border-navy-800 { border-color: #122855; }
+.border-navy-700 { border-color: #1B3B7A; }
+.text-brand-orange { color: #F97316; }
+.bg-brand-orange { background-color: #F97316; }
+
 :root {
   --background: #ffffff;
   --foreground: #0B1B3D;
@@ -94,6 +116,53 @@ body {
   }
 }
 
+@keyframes pedestalShadow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(0.82);
+    opacity: 0.25;
+  }
+}
+
+@keyframes pedestalRing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(0.88);
+    opacity: 0.2;
+  }
+}
+
+@keyframes sparkleTwinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25) rotate(45deg);
+  }
+}
+
+@keyframes holographicScan {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
 .animate-float-robot {
   animation: floatRobot 5s ease-in-out infinite;
 }
@@ -119,11 +188,23 @@ body {
 }
 
 .animate-slow-orbit {
-  animation: slowOrbit 45s linear infinite;
+  animation: slowOrbit 30s linear infinite;
 }
 
 .animate-pulse-badge {
   animation: pulseBadge 3s ease-in-out infinite;
+}
+
+.animate-pedestal-shadow {
+  animation: pedestalShadow 5s ease-in-out infinite;
+}
+
+.animate-pedestal-ring {
+  animation: pedestalRing 5s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkleTwinkle 2.5s ease-in-out infinite;
 }
 
 /* 3D Perspective Card */
@@ -134,3 +215,4 @@ body {
 .transform-style-3d {
   transform-style: preserve-3d;
 }
+
