@@ -148,7 +148,6 @@ export default function VehicleLoanPage() {
                 ))}
               </div>
             </div>
-
           </div>
 
           {/* Right Action Sidebar */}
