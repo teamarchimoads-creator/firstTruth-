@@ -4,6 +4,8 @@ import React, { useState, useId } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
+import AnimatedHeadline from "@/components/AnimatedHeadline";
 
 export default function EmiCalculatorPage() {
   const { openModal } = useModal();
@@ -101,9 +103,11 @@ export default function EmiCalculatorPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-semibold mb-4 tracking-wide uppercase">
                 <span>Financial Planning Tool</span>
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
-                Loan EMI <span className="text-[#F97316]">Calculator</span>
-              </h1>
+              <AnimatedHeadline
+                text="Loan EMI Calculator"
+                accentWord="Calculator"
+                className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight"
+              />
               <p className="max-w-2xl text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
                 Estimate your monthly repayments, understand your overall interest outflow, and plan your borrowing with accurate, transparent calculations.
               </p>
@@ -122,21 +126,13 @@ export default function EmiCalculatorPage() {
 
             {/* Mascot Column */}
             <div className="lg:col-span-4 flex items-center justify-center">
-              <div className="relative w-56 sm:w-64 h-72 sm:h-80 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-                <div className="absolute -bottom-2 w-36 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-                <div className="relative z-10 animate-float-robot">
-                  <Image
-                    src="/robo-calculator.png"
-                    alt="First Truth EMI Calculator Mascot"
-                    width={260}
-                    height={390}
-                    priority
-                    unoptimized
-                    className="w-48 sm:w-56 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                  />
-                </div>
-              </div>
+              <MascotCard
+                src="/robo-calculator.png"
+                alt="First Truth EMI Calculator Mascot"
+                width={260}
+                height={390}
+                badgeText="Financial Planning Bot"
+              />
             </div>
 
           </div>

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
 
 export default function VehicleLoanPage() {
   const { openModal } = useModal();
@@ -30,7 +31,7 @@ export default function VehicleLoanPage() {
   return (
     <div className="w-full py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6">
           <Link href="/" className="hover:text-[#F97316]">Home</Link>
@@ -43,7 +44,7 @@ export default function VehicleLoanPage() {
         {/* Hero with Mascot */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-[#0B1B3D] text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(#F97316_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
-          
+
           <div className="lg:col-span-8 relative z-10">
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-bold uppercase tracking-wider">
               <span>Private &amp; Commercial Auto</span>
@@ -68,29 +69,21 @@ export default function VehicleLoanPage() {
           </div>
 
           <div className="lg:col-span-4 relative z-10 flex items-center justify-center">
-            <div className="relative w-52 sm:w-60 h-64 sm:h-72 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-              <div className="absolute -bottom-2 w-32 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-              <div className="relative z-10 animate-float-robot">
-                <Image
-                  src="/robo-vehicle-loan.png"
-                  alt="First Truth Vehicle Loan Mascot"
-                  width={240}
-                  height={360}
-                  priority
-                  unoptimized
-                  className="w-44 sm:w-52 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                />
-              </div>
-            </div>
+            <MascotCard
+              src="/robo-vehicle-loan.png"
+              alt="First Truth Vehicle Loan Mascot"
+              width={260}
+              height={380}
+              badgeText="Auto & Fleet Desk"
+            />
           </div>
         </div>
 
         {/* 2-Column Content */}
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           <div className="lg:col-span-8 space-y-8">
-            
+
             {/* Typical Discussion Card */}
             <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
               <h2 className="text-xl font-bold text-[#0B1B3D] mb-3 flex items-center gap-2">

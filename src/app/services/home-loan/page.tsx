@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
+import AnimatedHeadline from "@/components/AnimatedHeadline";
 
 export default function HomeLoanPage() {
   const { openModal } = useModal();
@@ -48,9 +50,11 @@ export default function HomeLoanPage() {
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-bold uppercase tracking-wider">
               <span>Residential Property Financing</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Home Loan Consultation
-            </h1>
+            <AnimatedHeadline
+              text="Home Loan Consultation"
+              accentWord="Consultation"
+              className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight"
+            />
             <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               We help prospective homebuyers explore financing options for purchasing a residential property. The consultation covers loan requirements, eligibility considerations, lender comparisons, repayment periods, and EMI estimates.
             </p>
@@ -68,21 +72,13 @@ export default function HomeLoanPage() {
           </div>
 
           <div className="lg:col-span-4 relative z-10 flex items-center justify-center">
-            <div className="relative w-52 sm:w-60 h-64 sm:h-72 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-              <div className="absolute -bottom-2 w-32 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-              <div className="relative z-10 animate-float-robot">
-                <Image
-                  src="/robo-home-loan.png"
-                  alt="First Truth Home Loan Mascot"
-                  width={240}
-                  height={360}
-                  priority
-                  unoptimized
-                  className="w-44 sm:w-52 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                />
-              </div>
-            </div>
+            <MascotCard
+              src="/robo-home-loan.png"
+              alt="First Truth Home Loan Mascot"
+              width={260}
+              height={380}
+              badgeText="Home Financing Guide"
+            />
           </div>
         </div>
 
@@ -94,10 +90,12 @@ export default function HomeLoanPage() {
             
             {/* Typical Discussion Card */}
             <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
-              <h2 className="text-xl font-bold text-[#0B1B3D] mb-3 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F97316]" />
-                Typical Consultation Topics
-              </h2>
+              <AnimatedHeadline
+                as="h2"
+                text="Typical Consultation Topics"
+                accentWord="Topics"
+                className="text-xl font-bold text-[#0B1B3D] mb-3"
+              />
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
                 During your home loan consultation with our Rohtak team, we will discuss:
               </p>

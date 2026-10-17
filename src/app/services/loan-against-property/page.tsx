@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
+import AnimatedHeadline from "@/components/AnimatedHeadline";
 
 export default function LoanAgainstPropertyPage() {
   const { openModal } = useModal();
@@ -48,9 +50,11 @@ export default function LoanAgainstPropertyPage() {
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-bold uppercase tracking-wider">
               <span>Property Collateral Financing</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Loan Against Property (LAP)
-            </h1>
+            <AnimatedHeadline
+              text="Loan Against Property Advisory"
+              accentWord="Advisory"
+              className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight"
+            />
             <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               For eligible property owners, a loan against property may be one option to explore for business or personal financing needs. The lender evaluates the property, applicant&apos;s financial position, and applicable lending criteria.
             </p>
@@ -68,21 +72,13 @@ export default function LoanAgainstPropertyPage() {
           </div>
 
           <div className="lg:col-span-4 relative z-10 flex items-center justify-center">
-            <div className="relative w-52 sm:w-60 h-64 sm:h-72 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-              <div className="absolute -bottom-2 w-32 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-              <div className="relative z-10 animate-float-robot">
-                <Image
-                  src="/robo-lap.png"
-                  alt="First Truth LAP Mascot"
-                  width={240}
-                  height={360}
-                  priority
-                  unoptimized
-                  className="w-44 sm:w-52 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                />
-              </div>
-            </div>
+            <MascotCard
+              src="/robo-lap.png"
+              alt="First Truth LAP Mascot"
+              width={260}
+              height={380}
+              badgeText="Property Collateral Desk"
+            />
           </div>
         </div>
 

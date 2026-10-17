@@ -85,10 +85,10 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-6" aria-label="Main Navigation">
+          <nav className="hidden xl:flex items-center gap-7" aria-label="Main Navigation">
             <Link
               href="/"
-              className={`text-sm tracking-wide transition-colors py-1 relative ${
+              className={`text-sm tracking-wide transition-colors py-1 relative nav-link-hover ${
                 isActive("/") && pathname === "/"
                   ? "text-[#0B1B3D] font-bold"
                   : "text-[#475569] hover:text-[#0B1B3D] font-medium"
@@ -96,13 +96,13 @@ export default function Navbar() {
             >
               Home
               {isActive("/") && pathname === "/" && (
-                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full shadow-[0_1px_6px_rgba(249,115,22,0.5)]" />
               )}
             </Link>
 
             <Link
               href="/about"
-              className={`text-sm tracking-wide transition-colors py-1 relative ${
+              className={`text-sm tracking-wide transition-colors py-1 relative nav-link-hover ${
                 isActive("/about")
                   ? "text-[#0B1B3D] font-bold"
                   : "text-[#475569] hover:text-[#0B1B3D] font-medium"
@@ -110,7 +110,7 @@ export default function Navbar() {
             >
               About FTFC
               {isActive("/about") && (
-                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full shadow-[0_1px_6px_rgba(249,115,22,0.5)]" />
               )}
             </Link>
 
@@ -123,7 +123,7 @@ export default function Navbar() {
             >
               <button
                 onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
-                className={`text-sm tracking-wide transition-colors py-1 inline-flex items-center gap-1 cursor-pointer ${
+                className={`text-sm tracking-wide transition-colors py-1 inline-flex items-center gap-1 cursor-pointer nav-link-hover ${
                   isActive("/services")
                     ? "text-[#0B1B3D] font-bold"
                     : "text-[#475569] hover:text-[#0B1B3D] font-medium"
@@ -133,7 +133,7 @@ export default function Navbar() {
               >
                 <span>Loan Services</span>
                 <svg
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  className={`w-3.5 h-3.5 transition-transform duration-300 ${
                     servicesDropdownOpen ? "rotate-180 text-[#F97316]" : "text-slate-400"
                   }`}
                   fill="none"
@@ -144,22 +144,22 @@ export default function Navbar() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
                 {isActive("/services") && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
+                  <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full shadow-[0_1px_6px_rgba(249,115,22,0.5)]" />
                 )}
               </button>
 
               {/* Dropdown Menu */}
               {servicesDropdownOpen && (
-                <div className="absolute top-full -left-4 w-72 pt-3 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                  <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xl p-2.5 space-y-1">
+                <div className="absolute top-full -left-4 w-72 pt-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-2xl p-2.5 space-y-1">
                     {serviceLinks.map((service) => (
                       <Link
                         key={service.href}
                         href={service.href}
-                        className={`block p-2.5 rounded-xl transition-all ${
+                        className={`block p-2.5 rounded-xl transition-all duration-200 ${
                           pathname === service.href
-                            ? "bg-orange-50/80 text-[#F97316]"
-                            : "hover:bg-slate-50 text-slate-700 hover:text-[#0B1B3D]"
+                            ? "bg-orange-50/90 text-[#F97316] font-semibold"
+                            : "hover:bg-slate-50 text-slate-700 hover:text-[#0B1B3D] hover:translate-x-1"
                         }`}
                       >
                         <div className="font-semibold text-xs leading-snug">{service.label}</div>
@@ -173,7 +173,7 @@ export default function Navbar() {
 
             <Link
               href="/emi-calculator"
-              className={`text-sm tracking-wide transition-colors py-1 relative ${
+              className={`text-sm tracking-wide transition-colors py-1 relative nav-link-hover ${
                 isActive("/emi-calculator")
                   ? "text-[#0B1B3D] font-bold"
                   : "text-[#475569] hover:text-[#0B1B3D] font-medium"
@@ -181,13 +181,13 @@ export default function Navbar() {
             >
               EMI Calculator
               {isActive("/emi-calculator") && (
-                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full shadow-[0_1px_6px_rgba(249,115,22,0.5)]" />
               )}
             </Link>
 
             <Link
               href="/credit-profile"
-              className={`text-sm tracking-wide transition-colors py-1 relative ${
+              className={`text-sm tracking-wide transition-colors py-1 relative nav-link-hover ${
                 isActive("/credit-profile")
                   ? "text-[#0B1B3D] font-bold"
                   : "text-[#475569] hover:text-[#0B1B3D] font-medium"
@@ -195,13 +195,13 @@ export default function Navbar() {
             >
               Credit Guidance
               {isActive("/credit-profile") && (
-                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full shadow-[0_1px_6px_rgba(249,115,22,0.5)]" />
               )}
             </Link>
 
             <Link
               href="/partners"
-              className={`text-sm tracking-wide transition-colors py-1 relative ${
+              className={`text-sm tracking-wide transition-colors py-1 relative nav-link-hover ${
                 isActive("/partners")
                   ? "text-[#0B1B3D] font-bold"
                   : "text-[#475569] hover:text-[#0B1B3D] font-medium"
@@ -209,13 +209,13 @@ export default function Navbar() {
             >
               FI Partner
               {isActive("/partners") && (
-                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full shadow-[0_1px_6px_rgba(249,115,22,0.5)]" />
               )}
             </Link>
 
             <Link
               href="/contact"
-              className={`text-sm tracking-wide transition-colors py-1 relative ${
+              className={`text-sm tracking-wide transition-colors py-1 relative nav-link-hover ${
                 isActive("/contact")
                   ? "text-[#0B1B3D] font-bold"
                   : "text-[#475569] hover:text-[#0B1B3D] font-medium"
@@ -223,7 +223,7 @@ export default function Navbar() {
             >
               Contact
               {isActive("/contact") && (
-                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#F97316] rounded-full shadow-[0_1px_6px_rgba(249,115,22,0.5)]" />
               )}
             </Link>
           </nav>
@@ -232,17 +232,17 @@ export default function Navbar() {
           <div className="hidden sm:flex items-center gap-3">
             <Link
               href="/services"
-              className="px-4 py-2 rounded-full border border-slate-300 text-xs sm:text-sm font-semibold text-[#0B1B3D] hover:bg-slate-50 transition-all cursor-pointer"
+              className="px-4 py-2 rounded-full border border-slate-300 text-xs sm:text-sm font-semibold text-[#0B1B3D] hover:bg-slate-50 transition-all duration-200 active:scale-95 cursor-pointer hover:border-slate-400"
             >
               Explore Services
             </Link>
             <button
               onClick={() => openModal()}
-              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#F97316] to-[#FB923C] hover:from-[#EA580C] hover:to-[#F97316] text-white text-xs sm:text-sm font-semibold shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 transition-all flex items-center gap-1.5 cursor-pointer group"
+              className="btn-sheen px-5 py-2.5 rounded-full bg-gradient-to-r from-[#F97316] to-[#FB923C] hover:from-[#EA580C] hover:to-[#F97316] text-white text-xs sm:text-sm font-semibold shadow-md shadow-orange-500/25 hover:shadow-orange-500/35 transition-all duration-300 active:scale-95 flex items-center gap-1.5 cursor-pointer group"
             >
               <span>Talk to Our Team</span>
               <svg
-                className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
+                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

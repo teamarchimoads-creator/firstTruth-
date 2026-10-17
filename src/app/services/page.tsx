@@ -4,6 +4,9 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
+import ScrollReveal from "@/components/ScrollReveal";
+import AnimatedHeadline from "@/components/AnimatedHeadline";
 
 export default function ServicesPage() {
   const { openModal } = useModal();
@@ -149,9 +152,11 @@ export default function ServicesPage() {
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-bold uppercase tracking-wider">
               <span>COMPREHENSIVE ADVISORY &amp; SYNDICATION</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Detailed Loan Consultation Services
-            </h1>
+            <AnimatedHeadline
+              text="Detailed Loan Consultation Services"
+              accentWord="Services"
+              className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight"
+            />
             <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               First Truth Finance Consultations helps borrowers explore financing routes, understand lender policies, and prepare verified documentation. Below are the key loan categories we consult on:
             </p>
@@ -175,45 +180,37 @@ export default function ServicesPage() {
           </div>
 
           <div className="lg:col-span-4 relative z-10 flex items-center justify-center">
-            <div className="relative w-52 sm:w-60 h-64 sm:h-72 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-              <div className="absolute -bottom-2 w-32 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-              <div className="relative z-10 animate-float-robot">
-                <Image
-                  src="/robo-services.png"
-                  alt="First Truth Services Mascot"
-                  width={240}
-                  height={360}
-                  priority
-                  unoptimized
-                  className="w-44 sm:w-52 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                />
-              </div>
-            </div>
+            <MascotCard
+              src="/robo-services.png"
+              alt="First Truth Services Mascot"
+              width={260}
+              height={380}
+              badgeText="Loan Services Desk"
+            />
           </div>
         </div>
 
         {/* 5 Service Cards Grid */}
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {services.map((service) => (
-            <div
-              key={service.id}
-              className="bg-white rounded-3xl border border-slate-200/90 hover:border-orange-300 p-6 sm:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-orange-50 group-hover:border-orange-200 transition-colors">
-                    {service.icon}
+          {services.map((service, index) => (
+            <ScrollReveal key={service.id} delay={index * 80} direction="up">
+              <div
+                className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 flex flex-col justify-between shadow-sm group loan-card-elevate h-full cursor-pointer"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-orange-50 group-hover:border-orange-200 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
+                      {service.icon}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1 rounded-full text-[10.5px] font-bold tracking-wide uppercase bg-slate-100 text-slate-700 transition-colors group-hover:bg-orange-100 group-hover:text-[#F97316]">
+                        {service.badge}
+                      </span>
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-orange-50 text-[#F97316] border border-orange-100">
+                        {service.category}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-full text-[10.5px] font-bold tracking-wide uppercase bg-slate-100 text-slate-700">
-                      {service.badge}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-orange-50 text-[#F97316] border border-orange-100">
-                      {service.category}
-                    </span>
-                  </div>
-                </div>
 
                 <h2 className="text-xl sm:text-2xl font-bold text-[#0B1B3D] group-hover:text-[#F97316] transition-colors leading-snug">
                   {service.title}
@@ -252,36 +249,39 @@ export default function ServicesPage() {
                 </button>
               </div>
             </div>
+          </ScrollReveal>
           ))}
 
           {/* Custom Loan Syndication Card */}
-          <div className="bg-gradient-to-br from-[#0B1B3D] to-[#1c366e] text-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-lg">
-            <div>
-              <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-orange-300">
-                Custom Loan Syndication
-              </span>
-              <h2 className="text-xl sm:text-2xl font-bold mt-4 leading-snug">
-                Multiple Lending Route Analysis
-              </h2>
-              <p className="mt-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                Whether you need blended funding, balance transfer, loan top-up, or specialized working capital facilities, our Rohtak consulting desk reviews multiple lender channels.
-              </p>
-              <div className="mt-5 space-y-2 text-xs text-slate-300">
-                <div className="flex items-center gap-2">✓ Objective comparison across participating lenders</div>
-                <div className="flex items-center gap-2">✓ Realistic assessment without artificial turnaround claims</div>
-                <div className="flex items-center gap-2">✓ Comprehensive document structuring support</div>
+          <ScrollReveal delay={services.length * 80} direction="up">
+            <div className="bg-gradient-to-br from-[#0B1B3D] to-[#1c366e] text-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-lg loan-card-elevate h-full">
+              <div>
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-orange-300">
+                  Custom Loan Syndication
+                </span>
+                <h2 className="text-xl sm:text-2xl font-bold mt-4 leading-snug">
+                  Multiple Lending Route Analysis
+                </h2>
+                <p className="mt-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
+                  Whether you need blended funding, balance transfer, loan top-up, or specialized working capital facilities, our Rohtak consulting desk reviews multiple lender channels.
+                </p>
+                <div className="mt-5 space-y-2 text-xs text-slate-300">
+                  <div className="flex items-center gap-2">✓ Objective comparison across participating lenders</div>
+                  <div className="flex items-center gap-2">✓ Realistic assessment without artificial turnaround claims</div>
+                  <div className="flex items-center gap-2">✓ Comprehensive document structuring support</div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-5 border-t border-white/10">
+                <button
+                  onClick={() => openModal("General Loan Consultation")}
+                  className="btn-sheen w-full py-3 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer text-center active:scale-95"
+                >
+                  Schedule Custom Loan Consultation →
+                </button>
               </div>
             </div>
-
-            <div className="mt-6 pt-5 border-t border-white/10">
-              <button
-                onClick={() => openModal("General Loan Consultation")}
-                className="w-full py-3 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer text-center"
-              >
-                Schedule Custom Loan Consultation →
-              </button>
-            </div>
-          </div>
+          </ScrollReveal>
         </div>
 
         {/* 5-Step Process */}
@@ -290,9 +290,12 @@ export default function ServicesPage() {
             <span className="text-xs font-bold uppercase tracking-wider text-[#F97316] block mb-1">
               Structured Journey
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight">
-              Our 5-Step Loan Consultation Process
-            </h2>
+            <AnimatedHeadline
+              as="h2"
+              text="Our 5-Step Loan Consultation Process"
+              accentWord="Process"
+              className="text-2xl sm:text-3xl font-extrabold text-[#0B1B3D] tracking-tight"
+            />
             <p className="mt-2 text-xs sm:text-sm text-slate-600">
               We guide you through each stage with documentation clarity and transparency.
             </p>

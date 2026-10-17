@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
+import AnimatedHeadline from "@/components/AnimatedHeadline";
 
 export default function CreditProfilePage() {
   const { openModal } = useModal();
@@ -76,9 +78,11 @@ export default function CreditProfilePage() {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-semibold mb-4 tracking-wide uppercase">
                 <span>Credit Education &amp; Guidance</span>
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
-                Demystify Your <span className="text-[#F97316]">Credit Profile</span>
-              </h1>
+              <AnimatedHeadline
+                text="Demystify Your Credit Profile"
+                accentWord="Profile"
+                className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight"
+              />
               <p className="max-w-2xl text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
                 Understand how credit bureaus evaluate your repayment record, what lenders examine during credit appraisal, and how to maintain healthy financial habits over time.
               </p>
@@ -101,21 +105,13 @@ export default function CreditProfilePage() {
 
             {/* Mascot Column */}
             <div className="lg:col-span-4 flex items-center justify-center">
-              <div className="relative w-56 sm:w-64 h-72 sm:h-80 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-                <div className="absolute -bottom-2 w-36 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-                <div className="relative z-10 animate-float-robot">
-                  <Image
-                    src="/robo-credit.png"
-                    alt="First Truth Credit Score Mascot"
-                    width={260}
-                    height={390}
-                    priority
-                    unoptimized
-                    className="w-48 sm:w-56 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                  />
-                </div>
-              </div>
+              <MascotCard
+                src="/robo-credit.png"
+                alt="First Truth Credit Score Mascot"
+                width={260}
+                height={390}
+                badgeText="CIBIL & Score Desk"
+              />
             </div>
 
           </div>

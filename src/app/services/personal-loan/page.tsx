@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
+import AnimatedHeadline from "@/components/AnimatedHeadline";
 
 export default function PersonalLoanPage() {
   const { openModal } = useModal();
@@ -48,9 +50,11 @@ export default function PersonalLoanPage() {
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-bold uppercase tracking-wider">
               <span>Unsecured Personal Credit</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Personal Loan Consultation
-            </h1>
+            <AnimatedHeadline
+              text="Personal Loan Consultation"
+              accentWord="Consultation"
+              className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight"
+            />
             <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               We help applicants explore personal financing options for eligible needs and understand the factors that may influence loan offers, including income, credit history, existing liabilities, and repayment capacity.
             </p>
@@ -68,21 +72,13 @@ export default function PersonalLoanPage() {
           </div>
 
           <div className="lg:col-span-4 relative z-10 flex items-center justify-center">
-            <div className="relative w-52 sm:w-60 h-64 sm:h-72 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-              <div className="absolute -bottom-2 w-32 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-              <div className="relative z-10 animate-float-robot">
-                <Image
-                  src="/robo-personal-loan.png"
-                  alt="First Truth Personal Loan Mascot"
-                  width={240}
-                  height={360}
-                  priority
-                  unoptimized
-                  className="w-44 sm:w-52 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                />
-              </div>
-            </div>
+            <MascotCard
+              src="/robo-personal-loan.png"
+              alt="First Truth Personal Loan Mascot"
+              width={260}
+              height={380}
+              badgeText="Personal Finance Guide"
+            />
           </div>
         </div>
 

@@ -4,6 +4,9 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useModal } from "@/context/ModalContext";
+import MascotCard from "@/components/MascotCard";
+import ScrollReveal from "@/components/ScrollReveal";
+import AnimatedHeadline from "@/components/AnimatedHeadline";
 
 export default function AboutPage() {
   const { openModal } = useModal();
@@ -80,9 +83,11 @@ export default function AboutPage() {
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#122855] border border-[#1B3B7A] text-[#F97316] text-xs font-bold uppercase tracking-wider">
               <span>ABOUT FTFC • ROHTAK, HARYANA</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              Transparent Guidance Starts with the Truth.
-            </h1>
+            <AnimatedHeadline
+              text="Transparent Guidance Starts with the Truth."
+              accentWord="Truth."
+              className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight"
+            />
             <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
               First Truth Finance Consultations (FTFC) is a dedicated loan syndication and financial consulting firm based in <strong>Rohtak, Haryana</strong>. Founded and led by <strong>Shubham Jain</strong>, the firm focuses on helping borrowers understand available financing options and navigate the documentation and application journey with complete clarity.
             </p>
@@ -100,21 +105,13 @@ export default function AboutPage() {
           </div>
 
           <div className="lg:col-span-4 relative z-10 flex items-center justify-center">
-            <div className="relative w-52 sm:w-60 h-64 sm:h-72 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-orange-500/20 via-sky-500/10 to-transparent blur-2xl animate-pulse-glow" />
-              <div className="absolute -bottom-2 w-32 h-3 rounded-[100%] bg-black/40 blur-sm animate-pedestal-shadow" />
-              <div className="relative z-10 animate-float-robot">
-                <Image
-                  src="/robo-about.png"
-                  alt="First Truth Advisory Mascot"
-                  width={240}
-                  height={360}
-                  priority
-                  unoptimized
-                  className="w-44 sm:w-52 h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.4)]"
-                />
-              </div>
-            </div>
+            <MascotCard
+              src="/robo-about.png"
+              alt="First Truth Advisory Mascot"
+              width={260}
+              height={380}
+              badgeText="Shubham Jain Desk"
+            />
           </div>
         </div>
 
@@ -139,9 +136,12 @@ export default function AboutPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-[#F97316] block mb-1">
                 Founding Philosophy
               </span>
-              <h3 className="text-xl font-extrabold text-[#0B1B3D]">
-                Truth First. Transparent Guidance. Informed Decisions.
-              </h3>
+              <AnimatedHeadline
+                as="h3"
+                text="Truth First. Transparent Guidance. Informed Decisions."
+                accentWord="Truth"
+                className="text-xl font-extrabold text-[#0B1B3D]"
+              />
               <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
                 We believe financial consulting should begin with clear communication. Clients should understand the documentation required, the nature of the financing being considered, and the applicable terms communicated by the lender before committing to an application.
               </p>
@@ -236,9 +236,12 @@ export default function AboutPage() {
               </span>
               <span className="w-5 h-[2.5px] bg-[#F97316] rounded-full" />
             </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B1B3D] tracking-tight">
-              Our Core Values
-            </h2>
+            <AnimatedHeadline
+              as="h2"
+              text="Our Core Values"
+              accentWord="Values"
+              className="text-2xl sm:text-4xl font-extrabold text-[#0B1B3D] tracking-tight justify-center text-center"
+            />
             <p className="mt-2 text-sm text-slate-600">
               The ethical standards that guide every consultation and recommendation.
             </p>
