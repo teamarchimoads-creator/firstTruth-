@@ -262,6 +262,7 @@ export default function ContactPage() {
                     type="button"
                     onClick={() => setSuccess(false)}
                     className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-colors"
+                    suppressHydrationWarning
                   >
                     Send Another Message
                   </button>
@@ -395,6 +396,7 @@ export default function ContactPage() {
                   type="submit"
                   disabled={loading}
                   className="w-full py-3.5 px-6 rounded-xl font-bold bg-brand-orange text-white hover:bg-orange-600 transition-all shadow-lg hover:shadow-orange-500/20 text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  suppressHydrationWarning
                 >
                   {loading ? (
                     <>

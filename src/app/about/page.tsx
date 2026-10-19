@@ -171,8 +171,10 @@ export default function AboutPage() {
                   Direct Advisory Desk
                 </span>
                 <button
+                  type="button"
                   onClick={() => openModal()}
                   className="px-4 py-2 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-semibold shadow transition-all cursor-pointer"
+                  suppressHydrationWarning
                 >
                   Consult Shubham
                 </button>
@@ -284,8 +286,10 @@ export default function AboutPage() {
               Explore Loan Services →
             </Link>
             <button
+              type="button"
               onClick={() => openModal()}
               className="px-6 py-2.5 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow"
+              suppressHydrationWarning
             >
               Talk to Our Team
             </button>

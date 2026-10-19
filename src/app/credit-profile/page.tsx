@@ -91,6 +91,7 @@ export default function CreditProfilePage() {
                   type="button"
                   onClick={() => openModal("Credit Profile Guidance")}
                   className="px-6 py-3 rounded-xl font-bold bg-[#F97316] text-white hover:bg-orange-600 transition-all text-sm shadow-lg shadow-orange-500/20"
+                  suppressHydrationWarning
                 >
                   Request Credit Profile Consultation
                 </button>
@@ -289,6 +290,7 @@ export default function CreditProfilePage() {
             type="button"
             onClick={() => openModal("Credit Profile Guidance")}
             className="px-8 py-3.5 rounded-xl font-bold bg-brand-orange text-white hover:bg-orange-600 transition-all text-sm shadow-lg shadow-orange-500/20"
+            suppressHydrationWarning
           >
             Schedule a Credit Review Session
           </button>

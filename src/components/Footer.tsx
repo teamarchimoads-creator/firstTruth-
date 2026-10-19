@@ -65,8 +65,10 @@ export default function Footer() {
               </li>
               <li>
                 <button
+                  type="button"
                   onClick={() => openModal()}
                   className="text-[#F97316] font-bold hover:underline cursor-pointer text-left inline-flex items-center gap-1.5"
+                  suppressHydrationWarning
                 >
                   <span>Book Free Consultation</span>
                   <span>→</span>

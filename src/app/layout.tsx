@@ -5,7 +5,6 @@ import { ModalProvider } from "@/context/ModalContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConsultationModal from "@/components/ConsultationModal";
-import Preloader from "@/components/Preloader";
 import FinanceCanvas from "@/components/FinanceCanvas";
 import PageTransition from "@/components/PageTransition";
 
@@ -52,10 +51,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${caveat.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-white text-[#0B1B3D] font-sans selection:bg-[#F97316] selection:text-white relative">
+    <html lang="en" className={`${jakarta.variable} ${caveat.variable} h-full antialiased`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-white text-[#0B1B3D] font-sans selection:bg-[#F97316] selection:text-white relative" suppressHydrationWarning>
         <ModalProvider>
-          <Preloader />
           <FinanceCanvas />
           <Navbar />
           <main className="flex-1 flex flex-col relative z-10">

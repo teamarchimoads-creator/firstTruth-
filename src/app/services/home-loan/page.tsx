@@ -173,8 +173,10 @@ export default function HomeLoanPage() {
                 <div>✓ EMI &amp; Repayment Planning</div>
               </div>
               <button
+                type="button"
                 onClick={() => openModal("Home Loan Consultation")}
                 className="mt-6 w-full py-3 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer text-center"
+                suppressHydrationWarning
               >
                 Schedule Consultation Now →
               </button>

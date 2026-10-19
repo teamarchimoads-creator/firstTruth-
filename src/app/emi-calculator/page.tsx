@@ -153,6 +153,7 @@ export default function EmiCalculatorPage() {
                 type="button"
                 onClick={() => setPreset(3500000, 8.5, 20)}
                 className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-slate-100 hover:bg-navy-50 hover:text-navy-900 transition-colors border border-slate-200"
+                suppressHydrationWarning
               >
                 🏠 Home Loan (₹35L @ 8.5%, 20y)
               </button>
@@ -160,6 +161,7 @@ export default function EmiCalculatorPage() {
                 type="button"
                 onClick={() => setPreset(800000, 9.25, 5)}
                 className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-slate-100 hover:bg-navy-50 hover:text-navy-900 transition-colors border border-slate-200"
+                suppressHydrationWarning
               >
                 🚗 Vehicle Loan (₹8L @ 9.25%, 5y)
               </button>
@@ -167,6 +169,7 @@ export default function EmiCalculatorPage() {
                 type="button"
                 onClick={() => setPreset(1500000, 11.5, 5)}
                 className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-slate-100 hover:bg-navy-50 hover:text-navy-900 transition-colors border border-slate-200"
+                suppressHydrationWarning
               >
                 💼 Business Loan (₹15L @ 11.5%, 5y)
               </button>
@@ -174,6 +177,7 @@ export default function EmiCalculatorPage() {
                 type="button"
                 onClick={() => setPreset(400000, 12.0, 3)}
                 className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-slate-100 hover:bg-navy-50 hover:text-navy-900 transition-colors border border-slate-200"
+                suppressHydrationWarning
               >
                 ⚡ Personal Loan (₹4L @ 12%, 3y)
               </button>
@@ -355,6 +359,7 @@ export default function EmiCalculatorPage() {
                   type="button"
                   onClick={() => openModal("Loan EMI Consultation")}
                   className="w-full py-3.5 px-6 rounded-xl font-bold bg-brand-orange text-white hover:bg-orange-600 transition-all shadow-lg hover:shadow-orange-500/20 text-center text-sm"
+                  suppressHydrationWarning
                 >
                   Consult an Advisor for This Loan
                 </button>
@@ -450,6 +455,7 @@ export default function EmiCalculatorPage() {
               type="button"
               onClick={() => openModal("Loan Structure Consultation")}
               className="px-6 py-3 rounded-xl font-bold bg-brand-orange text-white hover:bg-orange-600 transition-all text-sm"
+              suppressHydrationWarning
             >
               Request Consultation
             </button>

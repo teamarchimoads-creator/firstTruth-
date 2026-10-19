@@ -242,8 +242,10 @@ export default function ServicesPage() {
                   <span>→</span>
                 </Link>
                 <button
+                  type="button"
                   onClick={() => openModal(service.title)}
                   className="px-4 py-2.5 rounded-full border border-[#F97316] text-[#F97316] hover:bg-orange-50 text-xs font-bold transition-all cursor-pointer"
+                  suppressHydrationWarning
                 >
                   Book Consultation
                 </button>
@@ -274,8 +276,10 @@ export default function ServicesPage() {
 
               <div className="mt-6 pt-5 border-t border-white/10">
                 <button
+                  type="button"
                   onClick={() => openModal("General Loan Consultation")}
                   className="btn-sheen w-full py-3 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer text-center active:scale-95"
+                  suppressHydrationWarning
                 >
                   Schedule Custom Loan Consultation →
                 </button>

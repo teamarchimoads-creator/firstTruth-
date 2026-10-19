@@ -122,6 +122,7 @@ export default function Navbar() {
               onMouseLeave={() => setServicesDropdownOpen(false)}
             >
               <button
+                type="button"
                 onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
                 className={`text-sm tracking-wide transition-colors py-1 inline-flex items-center gap-1 cursor-pointer nav-link-hover ${
                   isActive("/services")
@@ -130,6 +131,7 @@ export default function Navbar() {
                 }`}
                 aria-expanded={servicesDropdownOpen}
                 aria-haspopup="true"
+                suppressHydrationWarning
               >
                 <span>Loan Services</span>
                 <svg
@@ -237,8 +239,10 @@ export default function Navbar() {
               Explore Services
             </Link>
             <button
+              type="button"
               onClick={() => openModal()}
               className="btn-sheen px-5 py-2.5 rounded-full bg-gradient-to-r from-[#F97316] to-[#FB923C] hover:from-[#EA580C] hover:to-[#F97316] text-white text-xs sm:text-sm font-semibold shadow-md shadow-orange-500/25 hover:shadow-orange-500/35 transition-all duration-300 active:scale-95 flex items-center gap-1.5 cursor-pointer group"
+              suppressHydrationWarning
             >
               <span>Talk to Our Team</span>
               <svg
@@ -260,16 +264,20 @@ export default function Navbar() {
           {/* Mobile menu toggle */}
           <div className="flex xl:hidden items-center gap-2">
             <button
+              type="button"
               onClick={() => openModal()}
               className="px-3.5 py-1.5 rounded-full bg-[#F97316] text-white text-xs font-semibold"
+              suppressHydrationWarning
             >
               Consultation
             </button>
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 cursor-pointer"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
+              suppressHydrationWarning
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
@@ -370,11 +378,13 @@ export default function Navbar() {
 
             <div className="pt-3 border-t border-slate-100 flex gap-2">
               <button
+                type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   openModal();
                 }}
                 className="flex-1 py-2.5 rounded-full bg-[#F97316] text-white text-xs font-semibold shadow text-center cursor-pointer"
+                suppressHydrationWarning
               >
                 Talk to Our Team →
               </button>

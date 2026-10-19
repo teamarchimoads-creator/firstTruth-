@@ -186,8 +186,10 @@ export default function Home() {
                     <span>→</span>
                   </Link>
                   <button
+                    type="button"
                     onClick={() => openModal()}
                     className="w-full py-2.5 px-4 rounded-full bg-white border border-slate-300 text-[#0B1B3D] font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
+                    suppressHydrationWarning
                   >
                     <span>Talk to Our Team</span>
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -296,8 +298,10 @@ export default function Home() {
                 </Link>
 
                 <button
+                  type="button"
                   onClick={() => openModal()}
                   className="px-8 py-3.5 rounded-full bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-[#0B1B3D] font-semibold text-sm sm:text-base transition-all duration-200 cursor-pointer shadow-sm flex items-center gap-2 active:scale-95"
+                  suppressHydrationWarning
                 >
                   <span>Talk to Our Team</span>
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -447,8 +451,10 @@ export default function Home() {
                     <span>→</span>
                   </Link>
                   <button
+                    type="button"
                     onClick={() => openModal()}
                     className="text-xs sm:text-sm font-bold text-[#F97316] hover:text-[#EA580C] cursor-pointer"
+                    suppressHydrationWarning
                   >
                     Connect with Shubham Jain
                   </button>
@@ -543,8 +549,10 @@ export default function Home() {
                       <span className="transition-transform duration-200 group-hover/btn:translate-x-1">→</span>
                     </Link>
                     <button
+                      type="button"
                       onClick={() => openModal(service.title)}
                       className="text-[11px] text-slate-500 hover:text-slate-800 font-semibold cursor-pointer"
+                      suppressHydrationWarning
                     >
                       Quick Consult
                     </button>
@@ -575,8 +583,10 @@ export default function Home() {
 
                 <div className="mt-6 pt-4 border-t border-white/10">
                   <button
+                    type="button"
                     onClick={() => openModal("General Loan Consultation")}
                     className="btn-sheen w-full py-2.5 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer text-center active:scale-95"
+                    suppressHydrationWarning
                   >
                     Discuss Custom Requirement →
                   </button>
@@ -752,8 +762,10 @@ export default function Home() {
                       Open Full EMI Calculator &amp; Amortization →
                     </Link>
                     <button
+                      type="button"
                       onClick={() => openModal(`EMI Inquiry (₹${(calcAmount / 100000).toFixed(1)} Lakhs)`)}
                       className="btn-sheen w-full py-2.5 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs font-semibold shadow-md transition-all cursor-pointer text-center active:scale-95"
+                      suppressHydrationWarning
                     >
                       Discuss This Loan with Our Team →
                     </button>
@@ -850,8 +862,10 @@ export default function Home() {
               </div>
               <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0 relative z-10">
                 <button
+                  type="button"
                   onClick={() => openModal()}
                   className="btn-sheen px-7 py-3.5 rounded-full bg-white text-[#0B1B3D] text-xs sm:text-sm font-bold shadow-lg hover:bg-orange-50 transition-all cursor-pointer active:scale-95"
+                  suppressHydrationWarning
                 >
                   Book Free Consultation →
                 </button>

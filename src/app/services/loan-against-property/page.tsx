@@ -170,8 +170,10 @@ export default function LoanAgainstPropertyPage() {
                 <div>✓ Truth First &amp; Transparent Terms</div>
               </div>
               <button
+                type="button"
                 onClick={() => openModal("Loan Against Property (LAP)")}
                 className="mt-6 w-full py-3 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer text-center"
+                suppressHydrationWarning
               >
                 Request LAP Consultation →
               </button>

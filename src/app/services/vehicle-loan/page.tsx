@@ -166,8 +166,10 @@ export default function VehicleLoanPage() {
                 <div>✓ Pre-submission Document Clarity</div>
               </div>
               <button
+                type="button"
                 onClick={() => openModal("Vehicle Loan Consultation")}
                 className="mt-6 w-full py-3 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer text-center"
+                suppressHydrationWarning
               >
                 Schedule Vehicle Consultation →
               </button>
